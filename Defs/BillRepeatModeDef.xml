@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <Defs>
-  <BillRepeatModeDef>
-    <defName>TD_ColonistCount</defName>
-    <label>One per colonist + X</label>
-    <listOrder>15</listOrder>
-  </BillRepeatModeDef>
+	<BillRepeatModeDef>
+		<defName>TD_ColonistCount</defName>
+		<label>One per colonist + X</label>
+		<listOrder>15</listOrder>
+	</BillRepeatModeDef>
+	
+	<BillRepeatModeDef>
+		<defName>TD_XPerColonist</defName>
+		<label>X per colonist</label>
+		<listOrder>17</listOrder>
+	</BillRepeatModeDef>
 </Defs>

@@ -15,14 +15,16 @@ namespace TD_Enhancement_Pack
 	public static class RepeatModeDefOf
 	{
 		public static BillRepeatModeDef TD_ColonistCount;
+		public static BillRepeatModeDef TD_XPerColonist;
 	}
 
 	public static class Extensions
 	{
 		public static int TargetCount(this Bill_Production bill)
 		{
-			return bill.targetCount +
-				(bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount : 0);
+			return 
+				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.targetCount : bill.targetCount;
 		}
 	}
 
@@ -37,6 +39,11 @@ namespace TD_Enhancement_Pack
 				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.mapPawns.ColonistCount}+{__instance.targetCount})";
 				return false;
 			}
+			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
+			{
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.mapPawns.ColonistCount * __instance.targetCount})";
+				return false;
+			}
 			return true;
 		}
 	}
@@ -47,7 +54,8 @@ namespace TD_Enhancement_Pack
 		//public override bool ShouldDoNow()
 		public static bool Prefix(ref bool __result, Bill_Production __instance)
 		{
-			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount)
+			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount || 
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
 				int products = __instance.recipe.WorkerCounter.CountProducts(__instance);
 				int targetCount = __instance.TargetCount();
@@ -82,13 +90,11 @@ namespace TD_Enhancement_Pack
 		//private bool CanUnpause()
 		public static bool Prefix(ref bool __result, Bill_Production __instance)
 		{
-			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount)
+			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount ||
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
-				if (__instance.paused && __instance.pauseWhenSatisfied && __instance.recipe.WorkerCounter.CountProducts(__instance) < __instance.TargetCount())
-				{
-					__result = true;
-					return false;
-				}
+				__result = __instance.paused && __instance.pauseWhenSatisfied && __instance.recipe.WorkerCounter.CountProducts(__instance) < __instance.TargetCount();
+				return false;
 			}
 			return true;
 		}
@@ -125,6 +131,18 @@ namespace TD_Enhancement_Pack
 				else
 				{
 					bill.repeatMode = RepeatModeDefOf.TD_ColonistCount;
+				}
+			});
+			options.Add(item);
+			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerColonist.LabelCap, delegate
+			{
+				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+				{
+					Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
+				}
+				else
+				{
+					bill.repeatMode = RepeatModeDefOf.TD_XPerColonist;
 				}
 			});
 			options.Add(item);
@@ -182,7 +200,7 @@ namespace TD_Enhancement_Pack
 
 		public static bool ComparePatch(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
 		{
-			return repeatMode == targetCountMode || repeatMode == RepeatModeDefOf.TD_ColonistCount;
+			return repeatMode == targetCountMode || repeatMode == RepeatModeDefOf.TD_ColonistCount || repeatMode == RepeatModeDefOf.TD_XPerColonist;
 		}
 	}
 
