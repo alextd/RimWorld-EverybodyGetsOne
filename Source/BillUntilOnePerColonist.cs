@@ -26,6 +26,12 @@ namespace TD_Enhancement_Pack
 				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.targetCount :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.targetCount : bill.targetCount;
 		}
+		public static int UnpauseWhenYouHave(this Bill_Production bill)
+		{
+			return 
+				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.unpauseWhenYouHave : bill.unpauseWhenYouHave;
+		}
 	}
 
 	[HarmonyPatch(typeof(Bill_Production), nameof(Bill_Production.RepeatInfoText), MethodType.Getter)]
@@ -63,7 +69,7 @@ namespace TD_Enhancement_Pack
 				{
 					__instance.paused = true;
 				}
-				if (products <= __instance.unpauseWhenYouHave || !__instance.pauseWhenSatisfied)
+				if (products <= __instance.UnpauseWhenYouHave() || !__instance.pauseWhenSatisfied)
 				{
 					__instance.paused = false;
 				}
@@ -157,7 +163,7 @@ namespace TD_Enhancement_Pack
 		//public override void DoWindowContents(Rect inRect)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			return OrColonistCount_Transpiler.TranspilerC(instructions, 1);
+			return OrColonistCount_Transpiler.Transpiler(instructions);
 		}
 	}
 	public static class OrColonistCount_Transpiler
