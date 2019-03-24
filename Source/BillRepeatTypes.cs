@@ -229,8 +229,6 @@ namespace TD_Enhancement_Pack
 			FieldInfo repeatModeInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.repeatMode));
 			FieldInfo TargetCountInfo = AccessTools.Field(typeof(BillRepeatModeDefOf), nameof(BillRepeatModeDefOf.TargetCount));
 
-			//TODO list of RepeatModeDefOf FieldInfo
-
 			int done = 0;
 			List <CodeInstruction> instList = instructions.ToList();
 			for (int i = 0; i < instList.Count; i++)
