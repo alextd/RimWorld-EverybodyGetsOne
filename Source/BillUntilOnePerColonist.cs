@@ -16,6 +16,7 @@ namespace TD_Enhancement_Pack
 	{
 		public static BillRepeatModeDef TD_ColonistCount;
 		public static BillRepeatModeDef TD_XPerColonist;
+		public static BillRepeatModeDef TD_WithSurplusIng;
 	}
 
 	public static class Extensions
@@ -31,6 +32,18 @@ namespace TD_Enhancement_Pack
 			return 
 				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.unpauseWhenYouHave :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.unpauseWhenYouHave : bill.unpauseWhenYouHave;
+		}
+		public static int IngredientCount(this Bill_Production bill)
+		{
+			return bill.Map.resourceCounter.GetCountFor(bill.recipe.ingredients.First().filter.BestThingRequest);
+		}
+
+		public static int GetCountFor(this ResourceCounter res, ThingRequest request)
+		{
+			if (request.singleDef != null)
+				return res.GetCount(request.singleDef);
+			else
+				return res.GetCountIn(request.group);
 		}
 	}
 
@@ -48,6 +61,11 @@ namespace TD_Enhancement_Pack
 			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
 				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.mapPawns.ColonistCount * __instance.targetCount})";
+				return false;
+			}
+			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
+			{
+				__result = $"{__instance.IngredientCount()} > {__instance.targetCount}";
 				return false;
 			}
 			return true;
@@ -74,6 +92,11 @@ namespace TD_Enhancement_Pack
 					__instance.paused = false;
 				}
 				__result = !__instance.paused && products < targetCount;
+				return false;
+			}
+			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
+			{
+				__result = __instance.IngredientCount() > __instance.targetCount;
 				return false;
 			}
 			return true;
@@ -140,6 +163,7 @@ namespace TD_Enhancement_Pack
 				}
 			});
 			options.Add(item);
+
 			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerColonist.LabelCap, delegate
 			{
 				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
@@ -149,6 +173,19 @@ namespace TD_Enhancement_Pack
 				else
 				{
 					bill.repeatMode = RepeatModeDefOf.TD_XPerColonist;
+				}
+			});
+			options.Add(item);
+
+			item = new FloatMenuOption(RepeatModeDefOf.TD_WithSurplusIng.LabelCap, delegate
+			{
+				if (bill.recipe.ingredients.Count() != 1)
+				{
+					Messages.Message("TD.RecipeCannotHaveSurplus".Translate(), MessageTypeDefOf.RejectInput, false);
+				}
+				else
+				{
+					bill.repeatMode = RepeatModeDefOf.TD_WithSurplusIng;
 				}
 			});
 			options.Add(item);
@@ -195,7 +232,7 @@ namespace TD_Enhancement_Pack
 					done++;
 					//Stack is: this.bill.repeatMode, BillRepeatModeDefOf.TargetCount
 					//Replacing if(repeatMode == TargetCount) with 
-					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount)
+					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount etc)
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), nameof(ComparePatch)));
 					yield return new CodeInstruction(inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse : OpCodes.Brtrue, inst.operand);
 				}
@@ -206,7 +243,10 @@ namespace TD_Enhancement_Pack
 
 		public static bool ComparePatch(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
 		{
-			return repeatMode == targetCountMode || repeatMode == RepeatModeDefOf.TD_ColonistCount || repeatMode == RepeatModeDefOf.TD_XPerColonist;
+			return repeatMode == targetCountMode || 
+				repeatMode == RepeatModeDefOf.TD_ColonistCount || 
+				repeatMode == RepeatModeDefOf.TD_XPerColonist || 
+				repeatMode == RepeatModeDefOf.TD_WithSurplusIng;
 		}
 	}
 

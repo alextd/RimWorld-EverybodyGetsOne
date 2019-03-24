@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <Defs>
+	<!--
+  <BillRepeatModeDef>
+    <defName>RepeatCount</defName>
+    <label>do X times</label>
+    <listOrder>0</listOrder>
+  </BillRepeatModeDef>
+
+  <BillRepeatModeDef>
+    <defName>TargetCount</defName>
+    <label>do until you have X</label>
+    <listOrder>10</listOrder>
+  </BillRepeatModeDef>
+
+  <BillRepeatModeDef>
+    <defName>Forever</defName>
+    <label>do forever</label>
+    <listOrder>20</listOrder>
+  </BillRepeatModeDef>
+	-->
 	<BillRepeatModeDef>
 		<defName>TD_ColonistCount</defName>
 		<label>One per colonist + X</label>
-		<listOrder>15</listOrder>
+		<listOrder>15</listOrder> <!-- listOrder seems to do nothing -->
 	</BillRepeatModeDef>
 	
 	<BillRepeatModeDef>
 		<defName>TD_XPerColonist</defName>
 		<label>X per colonist</label>
 		<listOrder>17</listOrder>
+	</BillRepeatModeDef>
+	
+	<BillRepeatModeDef>
+		<defName>TD_WithSurplusIng</defName>
+		<label>With Surplus Ingredients</label>
+		<listOrder>25</listOrder>
 	</BillRepeatModeDef>
 </Defs>
