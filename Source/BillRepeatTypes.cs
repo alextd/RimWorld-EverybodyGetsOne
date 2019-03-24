@@ -104,10 +104,15 @@ namespace TD_Enhancement_Pack
 				if (__instance.suspended)
 				{
 					__result = false;
-					return false;
 				}
+				//Should finish if there's unfinished thing, that might've just made the ingrdient count drop below targetCount
+				else if (__instance is Bill_ProductionWithUft bill_UFT && bill_UFT.BoundUft != null)
+				{
+					__result = true;
+				}
+				else
+					__result = __instance.IngredientCount() > __instance.targetCount;
 
-				__result = __instance.IngredientCount() > __instance.targetCount;
 				return false;
 			}
 			return true;
