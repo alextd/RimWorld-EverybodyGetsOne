@@ -80,6 +80,12 @@ namespace TD_Enhancement_Pack
 			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount || 
 				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
+				if (__instance.suspended)
+				{
+					__result = false;
+					return false;
+				}
+
 				int products = __instance.recipe.WorkerCounter.CountProducts(__instance);
 				int targetCount = __instance.TargetCount();
 				if (__instance.pauseWhenSatisfied && products >= targetCount)
@@ -95,6 +101,12 @@ namespace TD_Enhancement_Pack
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
 			{
+				if (__instance.suspended)
+				{
+					__result = false;
+					return false;
+				}
+
 				__result = __instance.IngredientCount() > __instance.targetCount;
 				return false;
 			}
