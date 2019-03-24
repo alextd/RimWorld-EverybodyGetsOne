@@ -42,7 +42,6 @@ namespace TD_Enhancement_Pack
 
 		public static int GetCountFor(this ResourceCounter res, ThingFilter filter)
 		{
-			Log.Message($" defs are {filter.AllowedThingDefs.ToStringSafeEnumerable()}");
 			return filter.AllowedThingDefs.Sum(def => res.GetCount(def));
 		}
 	}
