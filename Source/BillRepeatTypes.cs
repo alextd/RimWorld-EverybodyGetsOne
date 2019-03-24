@@ -35,15 +35,15 @@ namespace TD_Enhancement_Pack
 		}
 		public static int IngredientCount(this Bill_Production bill)
 		{
-			return bill.Map.resourceCounter.GetCountFor(bill.recipe.ingredients.First().filter.BestThingRequest);
+			if(bill.recipe.ingredients.First() is IngredientCount ic && ic.IsFixedIngredient)
+				return bill.Map.resourceCounter.GetCount(bill.recipe.ingredients.First().FixedIngredient);
+			return bill.Map.resourceCounter.GetCountFor(bill.ingredientFilter);
 		}
 
-		public static int GetCountFor(this ResourceCounter res, ThingRequest request)
+		public static int GetCountFor(this ResourceCounter res, ThingFilter filter)
 		{
-			if (request.singleDef != null)
-				return res.GetCount(request.singleDef);
-			else
-				return res.GetCountIn(request.group);
+			Log.Message($" defs are {filter.AllowedThingDefs.ToStringSafeEnumerable()}");
+			return filter.AllowedThingDefs.Sum(def => res.GetCount(def));
 		}
 	}
 
