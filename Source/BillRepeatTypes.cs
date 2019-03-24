@@ -204,12 +204,15 @@ namespace TD_Enhancement_Pack
 	}
 	public static class OrColonistCount_Transpiler
 	{
+		//Once upon a time only the first method should be replaced
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
 			TranspilerC(instructions, 9999);
 		public static IEnumerable<CodeInstruction> TranspilerC(IEnumerable<CodeInstruction> instructions, int count)
 		{
 			FieldInfo repeatModeInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.repeatMode));
 			FieldInfo TargetCountInfo = AccessTools.Field(typeof(BillRepeatModeDefOf), nameof(BillRepeatModeDefOf.TargetCount));
+
+			//TODO list of RepeatModeDefOf FieldInfo
 
 			int done = 0;
 			List <CodeInstruction> instList = instructions.ToList();
@@ -229,10 +232,23 @@ namespace TD_Enhancement_Pack
 					instList[i - 1].opcode == OpCodes.Ldsfld && instList[i - 1].operand == TargetCountInfo)
 				{
 					done++;
+
+					//To distinguish between TargetCount / PauseWhenSatisfied, find what the next string loaded is
+					string context = "";
+					for(int k = i + 1;k< instList.Count;k++)
+					{
+						if (instList[k].opcode == OpCodes.Ldstr)
+						{
+							context = instList[k].operand as string;
+							break;
+						}
+					}
+
 					//Stack is: this.bill.repeatMode, BillRepeatModeDefOf.TargetCount
 					//Replacing if(repeatMode == TargetCount) with 
-					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount etc)
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), nameof(ComparePatch)));
+					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount ) via method call
+
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), ModeFor(context)));
 					yield return new CodeInstruction(inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse : OpCodes.Brtrue, inst.operand);
 				}
 				else
@@ -240,12 +256,21 @@ namespace TD_Enhancement_Pack
 			}
 		}
 
-		public static bool ComparePatch(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
+		public static string ModeFor(string context) =>
+			context == "PauseWhenSatisfied" ? nameof(IsAnyPauseMode) : nameof(IsAnyTargetMode);
+		public static bool IsAnyTargetMode(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
 		{
-			return repeatMode == targetCountMode || 
-				repeatMode == RepeatModeDefOf.TD_ColonistCount || 
-				repeatMode == RepeatModeDefOf.TD_XPerColonist || 
+			return repeatMode == targetCountMode ||
+				repeatMode == RepeatModeDefOf.TD_ColonistCount ||
+				repeatMode == RepeatModeDefOf.TD_XPerColonist ||
 				repeatMode == RepeatModeDefOf.TD_WithSurplusIng;
+		}
+
+		public static bool IsAnyPauseMode(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
+		{
+			return repeatMode == targetCountMode ||
+				repeatMode == RepeatModeDefOf.TD_ColonistCount ||
+				repeatMode == RepeatModeDefOf.TD_XPerColonist;
 		}
 	}
 
