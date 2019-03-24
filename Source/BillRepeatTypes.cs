@@ -59,7 +59,7 @@ namespace TD_Enhancement_Pack
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.mapPawns.ColonistCount * __instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.mapPawns.ColonistCount * __instance.targetCount} ({__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
