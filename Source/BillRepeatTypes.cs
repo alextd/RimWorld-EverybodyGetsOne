@@ -216,7 +216,39 @@ namespace TD_Enhancement_Pack
 		//public override void DoWindowContents(Rect inRect)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			return OrColonistCount_Transpiler.Transpiler(instructions);
+			//IL_0203: ldfld int32 RimWorld.Bill_Production::targetCount
+			FieldInfo targetCountInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.targetCount));
+
+			int todoTCByValue = 1;//first 2 counts of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
+			int todoTCByRef = 1;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
+			foreach (CodeInstruction i in OrColonistCount_Transpiler.Transpiler(instructions))
+			{
+				if (todoTCByValue > 0 && i.opcode == OpCodes.Ldfld && i.operand == targetCountInfo)
+				{
+					Log.Message("DOING V");
+					todoTCByValue--;
+
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Extensions), nameof(Extensions.TargetCount)));
+				}
+				else if (todoTCByRef > 0 && i.opcode == OpCodes.Ldflda && i.operand == targetCountInfo)
+				{
+					Log.Message("DOING R");
+					todoTCByRef--;
+
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
+				}
+				else
+					yield return i;
+			}
+		}
+
+		public static int returnValue;
+		public static ref int TargetCountRef(this Bill_Production bill)
+		{
+			returnValue = bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.targetCount : bill.targetCount;
+			Log.Message($"TargetCount for {bill} is {returnValue}");
+			return ref returnValue;
 		}
 	}
 	public static class OrColonistCount_Transpiler
