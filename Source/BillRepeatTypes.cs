@@ -218,6 +218,11 @@ namespace TD_Enhancement_Pack
 		//public override void DoWindowContents(Rect inRect)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
+			instructions = OrColonistCount_Transpiler.Transpiler(instructions);
+			instructions = Harmony.Transpilers.MethodReplacer(instructions,
+				AccessTools.Method(typeof(RecipeWorkerCounter), nameof(RecipeWorkerCounter.CountProducts)),
+				AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(CountTracked)));
+
 			//IL_0203: ldfld int32 RimWorld.Bill_Production::targetCount
 			FieldInfo targetCountInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.targetCount));
 			FieldInfo unpauseWhenYouHaveInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.unpauseWhenYouHave));
@@ -225,7 +230,7 @@ namespace TD_Enhancement_Pack
 			int todoTCByValue = 1;//first 2 counts of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
 			int todoTCByRef = 1;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
 			int todoUnpause = 1; //first ldflda unpauseWhenYouHave is the displayed count
-			foreach (CodeInstruction i in OrColonistCount_Transpiler.Transpiler(instructions))
+			foreach (CodeInstruction i in instructions)
 			{
 				if (todoTCByValue > 0 && i.opcode == OpCodes.Ldfld && i.operand == targetCountInfo)
 				{
@@ -248,6 +253,12 @@ namespace TD_Enhancement_Pack
 				else
 					yield return i;
 			}
+		}
+
+		//public virtual int CountProducts(Bill_Production bill)
+		public static int CountTracked(RecipeWorkerCounter counter, Bill_Production bill)
+		{
+			return bill.repeatMode == RepeatModeDefOf.TD_WithSurplusIng ? bill.IngredientCount() : counter.CountProducts(bill);
 		}
 
 		public static int returnValue;
