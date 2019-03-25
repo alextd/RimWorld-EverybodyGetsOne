@@ -86,6 +86,7 @@ namespace TD_Enhancement_Pack
 					return false;
 				}
 
+				//Same as TargetCount mode but with .TargetCount instead of .targetCount
 				int products = __instance.recipe.WorkerCounter.CountProducts(__instance);
 				int targetCount = __instance.TargetCount();
 				if (__instance.pauseWhenSatisfied && products >= targetCount)
@@ -105,6 +106,7 @@ namespace TD_Enhancement_Pack
 				{
 					__result = false;
 				}
+
 				//Should finish if there's unfinished thing, that might've just made the ingrdient count drop below targetCount
 				else if (__instance is Bill_ProductionWithUft bill_UFT && bill_UFT.BoundUft != null)
 				{
