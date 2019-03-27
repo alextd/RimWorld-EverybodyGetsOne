@@ -278,7 +278,9 @@ namespace TD_Enhancement_Pack
 		//Once upon a time only the first method should be replaced
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
 			TranspilerC(instructions, 9999);
-		public static IEnumerable<CodeInstruction> TranspilerC(IEnumerable<CodeInstruction> instructions, int count)
+		public static IEnumerable<CodeInstruction> TranspilerC(IEnumerable<CodeInstruction> instructions, int count) =>
+			TranspilerB(instructions, 9999, false);
+		public static IEnumerable<CodeInstruction> TranspilerB(IEnumerable<CodeInstruction> instructions, int count, bool noSurplus)
 		{
 			FieldInfo repeatModeInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.repeatMode));
 			FieldInfo TargetCountInfo = AccessTools.Field(typeof(BillRepeatModeDefOf), nameof(BillRepeatModeDefOf.TargetCount));
@@ -317,7 +319,7 @@ namespace TD_Enhancement_Pack
 					//Replacing if(repeatMode == TargetCount) with 
 					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount ) via method call
 
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), ModeFor(context)));
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), ModeFor(context, noSurplus)));
 					yield return new CodeInstruction(inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse : OpCodes.Brtrue, inst.operand);
 				}
 				else
@@ -325,8 +327,8 @@ namespace TD_Enhancement_Pack
 			}
 		}
 
-		public static string ModeFor(string context) =>
-			context == "PauseWhenSatisfied" ? nameof(IsAnyPauseMode) : nameof(IsAnyTargetMode);
+		public static string ModeFor(string context, bool noSurplus) =>
+			noSurplus || context == "PauseWhenSatisfied" ? nameof(IsAnyPauseMode) : nameof(IsAnyTargetMode);
 		public static bool IsAnyTargetMode(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
 		{
 			return repeatMode == targetCountMode ||
@@ -379,8 +381,13 @@ namespace TD_Enhancement_Pack
 				AccessTools.Method(patchType, "DrawFilters") is MethodInfo patchMethod)
 			{
 				HarmonyInstance harmony = HarmonyInstance.Create("Uuugggg.rimworld.TD_Enhancement_Pack.main");
-				harmony.Patch(patchMethod, transpiler: new HarmonyMethod(typeof(OrColonistCount_Transpiler), "Transpiler"));
+				harmony.Patch(patchMethod, transpiler: new HarmonyMethod(typeof(ImprovedWorkbenches_Patch), "Transpiler"));
 			}
+		}
+
+		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			return OrColonistCount_Transpiler.TranspilerB(instructions, 9999, true);
 		}
 
 	}
