@@ -127,7 +127,32 @@ namespace TD_Enhancement_Pack
 		//protected override void DoConfigInterface(Rect baseRect, Color baseColor)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			return OrColonistCount_Transpiler.Transpiler(instructions);
+			instructions = OrColonistCount_Transpiler.Transpiler(instructions);
+
+			//For One-Per + X, don't set a minumum
+			FieldInfo repeatModeInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.repeatMode));
+			//public static int Max(int a, int b)
+			MethodInfo MaxInfo = AccessTools.Method(typeof(UnityEngine.Mathf), nameof(UnityEngine.Mathf.Max), new Type[] { typeof(int), typeof(int) });
+
+			foreach(var i in instructions)
+			{
+				if(i.opcode == OpCodes.Call && i.operand == MaxInfo)
+				{
+					yield return new CodeInstruction(OpCodes.Ldarg_0);//this.
+					yield return new CodeInstruction(OpCodes.Ldfld, repeatModeInfo);//this.repeatMode
+
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(DoConfigInterface_Patch), nameof(ActuallyMax)));
+				}
+				else
+					yield return i;
+			}
+		}
+
+		public static int ActuallyMax(int a, int b, BillRepeatModeDef def)
+		{
+			if (def == RepeatModeDefOf.TD_ColonistCount) return b;
+
+			return UnityEngine.Mathf.Max(a, b);
 		}
 	}
 
