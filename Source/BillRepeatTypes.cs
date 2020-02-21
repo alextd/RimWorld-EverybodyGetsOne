@@ -324,7 +324,7 @@ namespace TD_Enhancement_Pack
 				//IL_04c4: bne.un IL_059d
 
 				if (done < count &&
-					(inst.opcode == OpCodes.Bne_Un || inst.opcode == OpCodes.Beq) &&  //assembly shows Beq_S but Beq in transpiler
+					(inst.opcode == OpCodes.Bne_Un || inst.opcode == OpCodes.Beq || inst.opcode == OpCodes.Bne_Un_S || inst.opcode == OpCodes.Beq_S) &&
 					instList[i - 2].opcode == OpCodes.Ldfld && instList[i - 2].operand.Equals(repeatModeInfo) &&
 					instList[i - 1].opcode == OpCodes.Ldsfld && instList[i - 1].operand.Equals(TargetCountInfo))
 				{
@@ -346,7 +346,11 @@ namespace TD_Enhancement_Pack
 					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount ) via method call
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), ModeFor(context, noSurplus)));
-					yield return new CodeInstruction(inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse : OpCodes.Brtrue, inst.operand);
+					inst.opcode = inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse :
+						inst.opcode == OpCodes.Bne_Un_S ? OpCodes.Brfalse_S :
+						inst.opcode == OpCodes.Beq ? OpCodes.Brtrue :
+						OpCodes.Brtrue_S;
+					yield return inst;
 				}
 				else
 					yield return inst;
