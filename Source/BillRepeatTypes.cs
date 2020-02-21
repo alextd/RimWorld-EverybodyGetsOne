@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
 using Verse;
+using Verse.AI;
 using RimWorld;
 using HarmonyLib;
 using TD.Utilities;
@@ -244,7 +245,7 @@ namespace TD_Enhancement_Pack
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
 			instructions = OrColonistCount_Transpiler.Transpiler(instructions);
-			instructions = Harmony.Transpilers.MethodReplacer(instructions,
+			instructions = Transpilers.MethodReplacer(instructions,
 				AccessTools.Method(typeof(RecipeWorkerCounter), nameof(RecipeWorkerCounter.CountProducts)),
 				AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(CountTracked)));
 
@@ -370,7 +371,6 @@ namespace TD_Enhancement_Pack
 		}
 	}
 
-	[StaticConstructorOnStartup]
 	public static class JobDriver_DoBill_Patch
 	{
 		static JobDriver_DoBill_Patch()
@@ -382,10 +382,12 @@ namespace TD_Enhancement_Pack
 			PatchCompilerGenerated.PatchGeneratedMethod(harmony, typeof(Verse.AI.JobDriver_DoBill),
 				delegate (MethodInfo method)
 				{
-					DynamicMethod dm = DynamicTools.CreateDynamicMethod(method, "-unused");
-
-					return (Harmony.ILCopying.MethodBodyReader.GetInstructions(dm.GetILGenerator(), method).
-						Any(ilcode => ilcode.operand.Equals(TargetCountInfo)));
+					//Here's a probably accurate way to find the initAction for the recount Toil
+					return method.DeclaringType is Type generatedType
+					&& generatedType.IsSealed
+					&& generatedType.GetFields().Length == 2
+					&& generatedType.GetFields().Any(f => f.FieldType == typeof(Toil))
+					&& generatedType.GetFields().Any(f => f.FieldType == typeof(JobDriver_DoBill));
 				}, transpiler: new HarmonyMethod(typeof(JobDriver_DoBill_Patch), nameof(Transpiler)));
 		}
 
