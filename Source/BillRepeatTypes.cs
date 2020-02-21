@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Verse;
 using RimWorld;
-using Harmony;
+using HarmonyLib;
 using TD.Utilities;
 
 namespace TD_Enhancement_Pack
@@ -136,7 +136,7 @@ namespace TD_Enhancement_Pack
 
 			foreach(var i in instructions)
 			{
-				if(i.opcode == OpCodes.Call && i.operand == MaxInfo)
+				if(i.opcode == OpCodes.Call && i.operand.Equals(MaxInfo))
 				{
 					yield return new CodeInstruction(OpCodes.Ldarg_0);//this.
 					yield return new CodeInstruction(OpCodes.Ldfld, repeatModeInfo);//this.repeatMode
@@ -184,7 +184,7 @@ namespace TD_Enhancement_Pack
 			foreach (CodeInstruction i in instructions)
 			{
 				yield return i;
-				if (i.opcode == OpCodes.Newobj && i.operand == ListCtorInfo)
+				if (i.opcode == OpCodes.Newobj && i.operand.Equals(ListCtorInfo))
 				{
 					yield return new CodeInstruction(OpCodes.Ldarg_0);//Bill_Production bill
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MakeConfigFloatMenu_Patch), nameof(InsertMode)));
@@ -257,19 +257,19 @@ namespace TD_Enhancement_Pack
 			int todoUnpause = 1; //first ldflda unpauseWhenYouHave is the displayed count
 			foreach (CodeInstruction i in instructions)
 			{
-				if (todoTCByValue > 0 && i.opcode == OpCodes.Ldfld && i.operand == targetCountInfo)
+				if (todoTCByValue > 0 && i.opcode == OpCodes.Ldfld && i.operand.Equals(targetCountInfo))
 				{
 					todoTCByValue--;
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Extensions), nameof(Extensions.TargetCount)));
 				}
-				else if (todoTCByRef > 0 && i.opcode == OpCodes.Ldflda && i.operand == targetCountInfo)
+				else if (todoTCByRef > 0 && i.opcode == OpCodes.Ldflda && i.operand.Equals(targetCountInfo))
 				{
 					todoTCByRef--;
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
 				}
-				else if (todoUnpause > 0 && i.opcode == OpCodes.Ldflda && i.operand == unpauseWhenYouHaveInfo)
+				else if (todoUnpause > 0 && i.opcode == OpCodes.Ldflda && i.operand.Equals(unpauseWhenYouHaveInfo))
 				{
 					todoUnpause--;
 
@@ -324,8 +324,8 @@ namespace TD_Enhancement_Pack
 
 				if (done < count &&
 					(inst.opcode == OpCodes.Bne_Un || inst.opcode == OpCodes.Beq) &&  //assembly shows Beq_S but Beq in transpiler
-					instList[i - 2].opcode == OpCodes.Ldfld && instList[i - 2].operand == repeatModeInfo &&
-					instList[i - 1].opcode == OpCodes.Ldsfld && instList[i - 1].operand == TargetCountInfo)
+					instList[i - 2].opcode == OpCodes.Ldfld && instList[i - 2].operand.Equals(repeatModeInfo) &&
+					instList[i - 1].opcode == OpCodes.Ldsfld && instList[i - 1].operand.Equals(TargetCountInfo))
 				{
 					done++;
 
@@ -375,7 +375,7 @@ namespace TD_Enhancement_Pack
 	{
 		static JobDriver_DoBill_Patch()
 		{
-			HarmonyInstance harmony = HarmonyInstance.Create("Uuugggg.rimworld.TD_Enhancement_Pack.main");
+			Harmony harmony = new Harmony("Uuugggg.rimworld.TD_Enhancement_Pack.main");
 
 			FieldInfo TargetCountInfo = AccessTools.Field(typeof(BillRepeatModeDefOf), nameof(BillRepeatModeDefOf.TargetCount));
 
@@ -385,7 +385,7 @@ namespace TD_Enhancement_Pack
 					DynamicMethod dm = DynamicTools.CreateDynamicMethod(method, "-unused");
 
 					return (Harmony.ILCopying.MethodBodyReader.GetInstructions(dm.GetILGenerator(), method).
-						Any(ilcode => ilcode.operand == TargetCountInfo));
+						Any(ilcode => ilcode.operand.Equals(TargetCountInfo)));
 				}, transpiler: new HarmonyMethod(typeof(JobDriver_DoBill_Patch), nameof(Transpiler)));
 		}
 
@@ -405,7 +405,7 @@ namespace TD_Enhancement_Pack
 			if(AccessTools.TypeByName("BillConfig_DoWindowContents_Patch") is Type patchType &&
 				AccessTools.Method(patchType, "DrawFilters") is MethodInfo patchMethod)
 			{
-				HarmonyInstance harmony = HarmonyInstance.Create("Uuugggg.rimworld.TD_Enhancement_Pack.main");
+				Harmony harmony = new Harmony("Uuugggg.rimworld.TD_Enhancement_Pack.main");
 				harmony.Patch(patchMethod, transpiler: new HarmonyMethod(typeof(ImprovedWorkbenches_Patch), "Transpiler"));
 			}
 		}

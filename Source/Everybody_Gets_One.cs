@@ -3,7 +3,7 @@ using System.Linq;
 using Verse;
 using RimWorld;
 using UnityEngine;
-using Harmony;
+using HarmonyLib;
 
 namespace Everybody_Gets_One
 {
@@ -14,10 +14,10 @@ namespace Everybody_Gets_One
 			// initialize settings
 			// GetSettings<Settings>();
 #if DEBUG
-			HarmonyInstance.DEBUG = true;
+			Harmony.DEBUG = true;
 #endif
 
-			HarmonyInstance harmony = HarmonyInstance.Create("Uuugggg.rimworld.Everybody_Gets_One.main");
+			Harmony harmony = new Harmony("Uuugggg.rimworld.Everybody_Gets_One.main");
 
 			//Turn off DefOf warning since harmony patches trigger it.
 			MethodInfo DefOfHelperInfo = AccessTools.Method(typeof(DefOfHelper), "EnsureInitializedInCtor");
