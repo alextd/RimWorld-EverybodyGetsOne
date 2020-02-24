@@ -137,7 +137,7 @@ namespace TD_Enhancement_Pack
 
 			foreach(var i in instructions)
 			{
-				if(i.opcode == OpCodes.Call && i.operand.Equals(MaxInfo))
+				if(i.Calls(MaxInfo))
 				{
 					yield return new CodeInstruction(OpCodes.Ldarg_0);//this.
 					yield return new CodeInstruction(OpCodes.Ldfld, repeatModeInfo);//this.repeatMode
@@ -258,19 +258,19 @@ namespace TD_Enhancement_Pack
 			int todoUnpause = 1; //first ldflda unpauseWhenYouHave is the displayed count
 			foreach (CodeInstruction i in instructions)
 			{
-				if (todoTCByValue > 0 && i.opcode == OpCodes.Ldfld && i.operand.Equals(targetCountInfo))
+				if (todoTCByValue > 0 && i.LoadsField(targetCountInfo))
 				{
 					todoTCByValue--;
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Extensions), nameof(Extensions.TargetCount)));
 				}
-				else if (todoTCByRef > 0 && i.opcode == OpCodes.Ldflda && i.operand.Equals(targetCountInfo))
+				else if (todoTCByRef > 0 && i.LoadsField(targetCountInfo, true))
 				{
 					todoTCByRef--;
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
 				}
-				else if (todoUnpause > 0 && i.opcode == OpCodes.Ldflda && i.operand.Equals(unpauseWhenYouHaveInfo))
+				else if (todoUnpause > 0 && i.LoadsField(unpauseWhenYouHaveInfo, true))
 				{
 					todoUnpause--;
 
@@ -325,8 +325,8 @@ namespace TD_Enhancement_Pack
 
 				if (done < count &&
 					(inst.opcode == OpCodes.Bne_Un || inst.opcode == OpCodes.Beq || inst.opcode == OpCodes.Bne_Un_S || inst.opcode == OpCodes.Beq_S) &&
-					instList[i - 2].opcode == OpCodes.Ldfld && instList[i - 2].operand.Equals(repeatModeInfo) &&
-					instList[i - 1].opcode == OpCodes.Ldsfld && instList[i - 1].operand.Equals(TargetCountInfo))
+					instList[i - 2].LoadsField(repeatModeInfo) &&
+					instList[i - 1].LoadsField(TargetCountInfo))
 				{
 					done++;
 
