@@ -10,7 +10,7 @@ using RimWorld;
 using HarmonyLib;
 using TD.Utilities;
 
-namespace TD_Enhancement_Pack
+namespace Everybody_Gets_One
 {
 	[DefOf]
 	public static class RepeatModeDefOf
@@ -253,22 +253,24 @@ namespace TD_Enhancement_Pack
 			FieldInfo targetCountInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.targetCount));
 			FieldInfo unpauseWhenYouHaveInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.unpauseWhenYouHave));
 
-			int todoTCByValue = 1;//first 2 counts of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
-			int todoTCByRef = 1;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
+			bool doneTCByValue = false;//first count of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
+			int countTCByRef = 0;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
 			int todoUnpause = 1; //first ldflda unpauseWhenYouHave is the displayed count
 			foreach (CodeInstruction i in instructions)
 			{
-				if (todoTCByValue > 0 && i.LoadsField(targetCountInfo))
+				if (!doneTCByValue && i.LoadsField(targetCountInfo))
 				{
-					todoTCByValue--;
+					doneTCByValue = true;
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Extensions), nameof(Extensions.TargetCount)));
 				}
-				else if (todoTCByRef > 0 && i.LoadsField(targetCountInfo, true))
+				else if (i.LoadsField(targetCountInfo, true))
 				{
-					todoTCByRef--;
-
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
+					countTCByRef++;
+					if (countTCByRef == 2)
+						yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
+					else
+						yield return i;
 				}
 				else if (todoUnpause > 0 && i.LoadsField(unpauseWhenYouHaveInfo, true))
 				{
@@ -379,7 +381,7 @@ namespace TD_Enhancement_Pack
 	{
 		static JobDriver_DoBill_Patch()
 		{
-			Harmony harmony = new Harmony("Uuugggg.rimworld.TD_Enhancement_Pack.main");
+			Harmony harmony = new Harmony("Uuugggg.rimworld.Everybody_Gets_One.main");
 
 			FieldInfo TargetCountInfo = AccessTools.Field(typeof(BillRepeatModeDefOf), nameof(BillRepeatModeDefOf.TargetCount));
 
@@ -411,7 +413,7 @@ namespace TD_Enhancement_Pack
 			if(AccessTools.TypeByName("BillConfig_DoWindowContents_Patch") is Type patchType &&
 				AccessTools.Method(patchType, "DrawFilters") is MethodInfo patchMethod)
 			{
-				Harmony harmony = new Harmony("Uuugggg.rimworld.TD_Enhancement_Pack.main");
+				Harmony harmony = new Harmony("Uuugggg.rimworld.Everybody_Gets_One.main");
 				harmony.Patch(patchMethod, transpiler: new HarmonyMethod(typeof(ImprovedWorkbenches_Patch), "Transpiler"));
 			}
 		}
