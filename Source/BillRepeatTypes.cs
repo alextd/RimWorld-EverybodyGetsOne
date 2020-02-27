@@ -348,11 +348,12 @@ namespace Everybody_Gets_One
 					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount ) via method call
 
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), ModeFor(context, noSurplus)));
-					inst.opcode = inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse :
+					yield return new CodeInstruction(
+						inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse :
 						inst.opcode == OpCodes.Bne_Un_S ? OpCodes.Brfalse_S :
 						inst.opcode == OpCodes.Beq ? OpCodes.Brtrue :
-						OpCodes.Brtrue_S;
-					yield return inst;
+						OpCodes.Brtrue_S,
+						inst.operand);
 				}
 				else
 					yield return inst;
