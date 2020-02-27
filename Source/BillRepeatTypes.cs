@@ -253,29 +253,21 @@ namespace Everybody_Gets_One
 			FieldInfo targetCountInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.targetCount));
 			FieldInfo unpauseWhenYouHaveInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.unpauseWhenYouHave));
 
-			bool doneTCByValue = false;//first count of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
-			int countTCByRef = 0;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
+			int todoTCByValue = 1;//first 2 counts of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
+			int todoTCByRef = 1;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
 			int todoUnpause = 1; //first ldflda unpauseWhenYouHave is the displayed count
 			foreach (CodeInstruction i in instructions)
 			{
-				if (!doneTCByValue && i.LoadsField(targetCountInfo))
+				if (i.LoadsField(targetCountInfo) && todoTCByValue-- > 0)
 				{
-					doneTCByValue = true;
-
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Extensions), nameof(Extensions.TargetCount)));
 				}
-				else if (i.LoadsField(targetCountInfo, true))
+				else if (i.LoadsField(targetCountInfo, true) && todoTCByRef-- > 0)
 				{
-					countTCByRef++;
-					if (countTCByRef == 2)
-						yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
-					else
-						yield return i;
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.TargetCountRef)));
 				}
-				else if (todoUnpause > 0 && i.LoadsField(unpauseWhenYouHaveInfo, true))
+				else if (i.LoadsField(unpauseWhenYouHaveInfo, true) && todoUnpause-- > 0)
 				{
-					todoUnpause--;
-
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.UnpauseWhenYouHaveRef)));
 				}
 				else
