@@ -25,14 +25,14 @@ namespace Everybody_Gets_One
 		public static int TargetCount(this Bill_Production bill)
 		{
 			return 
-				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.targetCount :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.targetCount : bill.targetCount;
+				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.PermanentColonistCount() + bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.PermanentColonistCount() * bill.targetCount : bill.targetCount;
 		}
 		public static int UnpauseWhenYouHave(this Bill_Production bill)
 		{
 			return 
-				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.ColonistCount + bill.unpauseWhenYouHave :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.ColonistCount * bill.unpauseWhenYouHave : bill.unpauseWhenYouHave;
+				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.PermanentColonistCount() + bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.PermanentColonistCount() * bill.unpauseWhenYouHave : bill.unpauseWhenYouHave;
 		}
 		public static int IngredientCount(this Bill_Production bill)
 		{
@@ -55,12 +55,12 @@ namespace Everybody_Gets_One
 		{
 			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.mapPawns.ColonistCount}+{__instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.mapPawns.PermanentColonistCount()}+{__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.mapPawns.ColonistCount * __instance.targetCount} ({__instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.mapPawns.PermanentColonistCount() * __instance.targetCount} ({__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
