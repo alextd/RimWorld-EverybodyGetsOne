@@ -31,6 +31,18 @@
 		<label>X per colonist</label>
 		<listOrder>17</listOrder>
 	</BillRepeatModeDef>
+
+  <BillRepeatModeDef>
+		<defName>TD_SlaveCount</defName>
+		<label>One per slave + X</label>
+		<listOrder>18</listOrder> <!-- listOrder seems to do nothing -->
+	</BillRepeatModeDef>
+	
+	<BillRepeatModeDef>
+		<defName>TD_XPerSlave</defName>
+		<label>X per slave</label>
+		<listOrder>19</listOrder>
+	</BillRepeatModeDef>
 	
 	<BillRepeatModeDef>
 		<defName>TD_WithSurplusIng</defName>
