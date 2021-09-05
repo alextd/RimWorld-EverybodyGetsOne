@@ -46,7 +46,7 @@
 	
 	<BillRepeatModeDef>
 		<defName>TD_WithSurplusIng</defName>
-		<label>With Surplus</label>
+		<label>With surplus</label>
 		<listOrder>25</listOrder>
 	</BillRepeatModeDef>
 </Defs>
