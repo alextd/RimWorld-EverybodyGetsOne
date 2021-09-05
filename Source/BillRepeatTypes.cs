@@ -228,19 +228,22 @@ namespace Everybody_Gets_One
 				}
 			});
 			options.Add(item);
-			
-			item = new FloatMenuOption(RepeatModeDefOf.TD_SlaveCount.LabelCap, delegate
+
+			if (ModsConfig.IdeologyActive)
 			{
-				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+				item = new FloatMenuOption(RepeatModeDefOf.TD_SlaveCount.LabelCap, delegate
 				{
-					Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
-				}
-				else
-				{
-					bill.repeatMode = RepeatModeDefOf.TD_SlaveCount;
-				}
-			});
-			options.Add(item);
+					if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+					{
+						Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
+					}
+					else
+					{
+						bill.repeatMode = RepeatModeDefOf.TD_SlaveCount;
+					}
+				});
+				options.Add(item);
+			}
 
 			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerColonist.LabelCap, delegate
 			{
@@ -254,19 +257,22 @@ namespace Everybody_Gets_One
 				}
 			});
 			options.Add(item);
-			
-			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerSlave.LabelCap, delegate
+
+			if (ModsConfig.IdeologyActive)
 			{
-				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+				item = new FloatMenuOption(RepeatModeDefOf.TD_XPerSlave.LabelCap, delegate
 				{
-					Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
-				}
-				else
-				{
-					bill.repeatMode = RepeatModeDefOf.TD_XPerSlave;
-				}
-			});
-			options.Add(item);
+					if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+					{
+						Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
+					}
+					else
+					{
+						bill.repeatMode = RepeatModeDefOf.TD_XPerSlave;
+					}
+				});
+				options.Add(item);
+			}
 
 			item = new FloatMenuOption(RepeatModeDefOf.TD_WithSurplusIng.LabelCap, delegate
 			{
