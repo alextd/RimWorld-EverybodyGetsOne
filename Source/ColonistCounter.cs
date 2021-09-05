@@ -22,11 +22,32 @@ namespace Everybody_Gets_One
 			List<Pawn> allPawns = mapPawns.AllPawns;
 			for (int i = 0; i < allPawns.Count; i++)
 			{
-				if (allPawns[i].IsColonist && !allPawns[i].IsQuestLodger())
+				if (allPawns[i].IsColonist && !allPawns[i].IsSlaveOfColony && !allPawns[i].IsQuestLodger())
 				{
 					num++;
 				}
 			}
+			return num;
+		}
+
+		public static int PermanentSlaveCount(this MapPawns mapPawns)
+		{
+			if (Current.ProgramState != ProgramState.Playing)
+			{
+				Verse.Log.Error("SlaveCount while not playing. This should get the starting slave pawn count.");
+				return 0;
+			}
+
+			int num = 0;
+			List<Pawn> allPawns = mapPawns.AllPawns;
+			for (int i = 0; i < allPawns.Count; i++)
+			{
+				if (allPawns[i].IsSlaveOfColony && !allPawns[i].IsQuestLodger())
+				{
+					num++;
+				}
+			}
+
 			return num;
 		}
 	}
