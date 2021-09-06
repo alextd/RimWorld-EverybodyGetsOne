@@ -26,9 +26,10 @@ namespace Everybody_Gets_One
 	{
 		public static int TargetCount(this Bill_Production bill)
 		{
-			return bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.PermanentColonistCount() + bill.targetCount :
+			return 
+				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.PermanentColonistCount() + bill.targetCount :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.PermanentColonistCount() * bill.targetCount :
-				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.mapPawns.PermanentSlaveCount() * bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.mapPawns.PermanentSlaveCount() + bill.targetCount :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerSlave ? bill.Map.mapPawns.PermanentSlaveCount() * bill.targetCount :
 				bill.targetCount;
 		}
@@ -37,7 +38,7 @@ namespace Everybody_Gets_One
 			return 
 				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.mapPawns.PermanentColonistCount() + bill.unpauseWhenYouHave :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.mapPawns.PermanentColonistCount() * bill.unpauseWhenYouHave :
-				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.mapPawns.PermanentSlaveCount() * bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.mapPawns.PermanentSlaveCount() + bill.unpauseWhenYouHave :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerSlave ? bill.Map.mapPawns.PermanentSlaveCount() * bill.unpauseWhenYouHave :
 				bill.unpauseWhenYouHave;
 		}
