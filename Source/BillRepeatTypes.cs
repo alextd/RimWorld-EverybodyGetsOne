@@ -46,12 +46,17 @@ namespace Everybody_Gets_One
 		{
 			if(bill.recipe.ingredients.First() is IngredientCount ic && ic.IsFixedIngredient)
 				return bill.Map.resourceCounter.GetCount(bill.recipe.ingredients.First().FixedIngredient);
-			return bill.Map.resourceCounter.GetCountFor(bill.ingredientFilter);
+			return bill.Map.resourceCounter.GetCountFor(bill);
 		}
 
-		public static int GetCountFor(this ResourceCounter res, ThingFilter filter)
+		public static int GetCountFor(this ResourceCounter res, Bill_Production bill)
 		{
-			return filter.AllowedThingDefs.Sum(def => res.GetCount(def));
+			//so just bill.ingredientFilter is too broad by default.
+			//But it IS set up to match fixedIngredientFilter when the game is SAVED (at least, or when anything is selected)
+			//Maybe that's a bug or an overlook
+			//BUT tl;dr
+			//There is no simple 'Bill.AllowedDefs' so we gotta double this up with AllowedThingDefs and IsFixedOrAllowedIngredient:
+			return bill.recipe.fixedIngredientFilter.AllowedThingDefs.Sum(def => bill.ingredientFilter.Allows(def) ? res.GetCount(def) : 0);
 		}
 	}
 
