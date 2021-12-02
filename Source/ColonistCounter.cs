@@ -8,47 +8,28 @@ using Verse;
 
 namespace Everybody_Gets_One
 {
-	static class ColonistCounter
+	public class ColonistCountMapComp : MapComponent
 	{
-		//Copy of ColonistCount plus IsQuestLodger check
-		public static int PermanentColonistCount(this MapPawns mapPawns)
+		//cache these counts each update
+		public int colonistCount, slaveCount;
+
+		public ColonistCountMapComp(Map map) : base(map) { }
+		public override void FinalizeInit()
 		{
-			if (Current.ProgramState != ProgramState.Playing)
-			{
-				Verse.Log.Error("ColonistCount while not playing. This should get the starting player pawn count.");
-				return 3;
-			}
-			int num = 0;
-			List<Pawn> allPawns = mapPawns.AllPawns;
-			for (int i = 0; i < allPawns.Count; i++)
-			{
-				if (allPawns[i].IsColonist && !allPawns[i].IsSlaveOfColony && !allPawns[i].IsQuestLodger())
-				{
-					num++;
-				}
-			}
-			return num;
+			MapComponentUpdate();
 		}
-
-		public static int PermanentSlaveCount(this MapPawns mapPawns)
+		public override void MapComponentUpdate()
 		{
-			if (Current.ProgramState != ProgramState.Playing)
-			{
-				Verse.Log.Error("SlaveCount while not playing. This should get the starting slave pawn count.");
-				return 0;
-			}
-
-			int num = 0;
-			List<Pawn> allPawns = mapPawns.AllPawns;
-			for (int i = 0; i < allPawns.Count; i++)
-			{
-				if (allPawns[i].IsSlaveOfColony && !allPawns[i].IsQuestLodger())
-				{
-					num++;
-				}
-			}
-
-			return num;
+			colonistCount = map.mapPawns.AllPawns.Count(p => p.IsColonist && !p.IsSlaveOfColony && !p.IsQuestLodger());
+			slaveCount = map.mapPawns.AllPawns.Count(p => p.IsSlaveOfColony && !p.IsQuestLodger());
 		}
+	}
+	public static class MapCompExtensions
+	{
+		public static int CurrentColonistCount(this Map map) =>
+			map.GetComponent<ColonistCountMapComp>().colonistCount;
+
+		public static int CurrentSlaveCount(this Map map) =>
+			map.GetComponent<ColonistCountMapComp>().slaveCount;
 	}
 }
