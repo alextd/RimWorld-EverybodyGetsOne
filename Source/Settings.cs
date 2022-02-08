@@ -6,14 +6,9 @@ using RimWorld;
 
 namespace Everybody_Gets_One
 {
-	class Settings : ModSettings
+	public class Settings : ModSettings
 	{
 		public bool setting;
-
-		public static Settings Get()
-		{
-			return LoadedModManager.GetMod<Everybody_Gets_One.Mod>().GetSettings<Settings>();
-		}
 
 		public void DoWindowContents(Rect wrect)
 		{
