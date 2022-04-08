@@ -439,18 +439,15 @@ namespace Everybody_Gets_One
 		{
 			Harmony harmony = new Harmony("Uuugggg.rimworld.Everybody_Gets_One.main");
 
-			FieldInfo TargetCountInfo = AccessTools.Field(typeof(BillRepeatModeDefOf), nameof(BillRepeatModeDefOf.TargetCount));
-
 			PatchCompilerGenerated.PatchGeneratedMethod(harmony, typeof(Verse.AI.JobDriver_DoBill),
-				delegate (MethodInfo method)
-				{
+				method =>
 					//Here's a probably accurate way to find the initAction for the recount Toil
-					return method.DeclaringType is Type generatedType
+					method.DeclaringType is Type generatedType
 					&& generatedType.IsSealed
 					&& generatedType.GetFields().Length == 2
 					&& generatedType.GetFields().Any(f => f.FieldType == typeof(Toil))
-					&& generatedType.GetFields().Any(f => f.FieldType == typeof(JobDriver_DoBill));
-				}, transpiler: new HarmonyMethod(typeof(JobDriver_DoBill_Patch), nameof(Transpiler)));
+					&& generatedType.GetFields().Any(f => f.FieldType == typeof(JobDriver_DoBill))
+					, transpiler: new HarmonyMethod(typeof(JobDriver_DoBill_Patch), nameof(Transpiler)));
 		}
 
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
