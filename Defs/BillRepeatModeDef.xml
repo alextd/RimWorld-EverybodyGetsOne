@@ -43,6 +43,19 @@
 		<label>X per slave</label>
 		<listOrder>19</listOrder>
 	</BillRepeatModeDef>
+
+	<BillRepeatModeDef>
+		<defName>TD_InhabitantCount</defName>
+		<label>One per inhabitant + X</label>
+		<listOrder>20</listOrder>
+		<!-- listOrder seems to do nothing -->
+	</BillRepeatModeDef>
+
+	<BillRepeatModeDef>
+		<defName>TD_XPerInhabitant</defName>
+		<label>X per inhabitant</label>
+		<listOrder>21</listOrder>
+	</BillRepeatModeDef>
 	
 	<BillRepeatModeDef>
 		<defName>TD_WithSurplusIng</defName>

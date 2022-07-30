@@ -18,8 +18,10 @@ namespace Everybody_Gets_One
 		public static BillRepeatModeDef TD_ColonistCount;
 		public static BillRepeatModeDef TD_XPerColonist;
 		public static BillRepeatModeDef TD_WithSurplusIng;
-    public static BillRepeatModeDef TD_SlaveCount;
-    public static BillRepeatModeDef TD_XPerSlave;
+		public static BillRepeatModeDef TD_SlaveCount;
+		public static BillRepeatModeDef TD_XPerSlave;
+		public static BillRepeatModeDef TD_InhabitantCount;
+		public static BillRepeatModeDef TD_XPerInhabitant;
 	}
 
 	public static class Extensions
@@ -31,6 +33,8 @@ namespace Everybody_Gets_One
 				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.CurrentColonistCount() * bill.targetCount :
 				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.CurrentSlaveCount() + bill.targetCount :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerSlave ? bill.Map.CurrentSlaveCount() * bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_InhabitantCount ? bill.Map.CurrentInhabitantCount() + bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerInhabitant ? bill.Map.CurrentInhabitantCount() * bill.targetCount :
 				bill.targetCount;
 		}
 		public static int UnpauseWhenYouHave(this Bill_Production bill)
@@ -40,6 +44,8 @@ namespace Everybody_Gets_One
 				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.CurrentColonistCount() * bill.unpauseWhenYouHave :
 				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.CurrentSlaveCount() + bill.unpauseWhenYouHave :
 				bill.repeatMode == RepeatModeDefOf.TD_XPerSlave ? bill.Map.CurrentSlaveCount() * bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_InhabitantCount ? bill.Map.CurrentInhabitantCount() + bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerInhabitant ? bill.Map.CurrentInhabitantCount() * bill.unpauseWhenYouHave :
 				bill.unpauseWhenYouHave;
 		}
 		public static int IngredientCount(this Bill_Production bill)
@@ -76,6 +82,11 @@ namespace Everybody_Gets_One
 				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentSlaveCount()}+{__instance.targetCount})";
 				return false;
 			}
+			if (__instance.repeatMode == RepeatModeDefOf.TD_InhabitantCount)
+			{
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentInhabitantCount()}+{__instance.targetCount})";
+				return false;
+			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
 			{
 				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentColonistCount() * __instance.targetCount} ({__instance.targetCount})";
@@ -84,6 +95,11 @@ namespace Everybody_Gets_One
 			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave)
 			{
 				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentSlaveCount() * __instance.targetCount} ({__instance.targetCount})";
+				return false;
+			}
+			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerInhabitant)
+			{
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentInhabitantCount() * __instance.targetCount} ({__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
@@ -104,7 +120,11 @@ namespace Everybody_Gets_One
 			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount || 
 				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist ||
 				__instance.repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave)
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave ||
+				__instance.repeatMode == RepeatModeDefOf.TD_InhabitantCount ||
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerInhabitant
+
+				)
 			{
 				if (__instance.suspended)
 				{
@@ -176,7 +196,7 @@ namespace Everybody_Gets_One
 
 		public static int ActuallyMax(int a, int b, BillRepeatModeDef def)
 		{
-			if (def == RepeatModeDefOf.TD_ColonistCount || def == RepeatModeDefOf.TD_SlaveCount) return b;
+			if (def == RepeatModeDefOf.TD_ColonistCount || def == RepeatModeDefOf.TD_SlaveCount || def == RepeatModeDefOf.TD_InhabitantCount) return b;
 
 			return UnityEngine.Mathf.Max(a, b);
 		}
@@ -191,7 +211,9 @@ namespace Everybody_Gets_One
 			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount ||
 				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist ||
 				__instance.repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave)
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave ||
+				__instance.repeatMode == RepeatModeDefOf.TD_InhabitantCount ||
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerInhabitant)
 			{
 				__result = __instance.paused && __instance.pauseWhenSatisfied && __instance.recipe.WorkerCounter.CountProducts(__instance) < __instance.TargetCount();
 				return false;
@@ -251,6 +273,22 @@ namespace Everybody_Gets_One
 				options.Add(item);
 			}
 
+			if (ModsConfig.IdeologyActive)
+			{
+				item = new FloatMenuOption(RepeatModeDefOf.TD_InhabitantCount.LabelCap, delegate
+				{
+					if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+					{
+						Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
+					}
+					else
+					{
+						bill.repeatMode = RepeatModeDefOf.TD_InhabitantCount;
+					}
+				});
+				options.Add(item);
+			}
+
 			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerColonist.LabelCap, delegate
 			{
 				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
@@ -275,6 +313,22 @@ namespace Everybody_Gets_One
 					else
 					{
 						bill.repeatMode = RepeatModeDefOf.TD_XPerSlave;
+					}
+				});
+				options.Add(item);
+			}
+
+			if (ModsConfig.IdeologyActive)
+			{
+				item = new FloatMenuOption(RepeatModeDefOf.TD_XPerInhabitant.LabelCap, delegate
+				{
+					if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+					{
+						Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
+					}
+					else
+					{
+						bill.repeatMode = RepeatModeDefOf.TD_XPerInhabitant;
 					}
 				});
 				options.Add(item);
@@ -420,6 +474,8 @@ namespace Everybody_Gets_One
 				repeatMode == RepeatModeDefOf.TD_XPerColonist ||
 				repeatMode == RepeatModeDefOf.TD_SlaveCount ||
 				repeatMode == RepeatModeDefOf.TD_XPerSlave ||
+				repeatMode == RepeatModeDefOf.TD_InhabitantCount ||
+				repeatMode == RepeatModeDefOf.TD_XPerInhabitant ||
 				repeatMode == RepeatModeDefOf.TD_WithSurplusIng;
 		}
 
@@ -429,7 +485,9 @@ namespace Everybody_Gets_One
 				repeatMode == RepeatModeDefOf.TD_ColonistCount ||
 				repeatMode == RepeatModeDefOf.TD_XPerColonist ||
 				repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				repeatMode == RepeatModeDefOf.TD_XPerSlave;
+				repeatMode == RepeatModeDefOf.TD_XPerSlave ||
+				repeatMode == RepeatModeDefOf.TD_InhabitantCount ||
+				repeatMode == RepeatModeDefOf.TD_XPerInhabitant;
 		}
 	}
 
