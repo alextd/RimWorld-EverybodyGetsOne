@@ -20,4 +20,17 @@
 			<downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
 		</li>
 	</modDependencies>
+  <modDependenciesByVersion>
+    <v1.4>
+			<li>
+				<packageId>Uuugggg.TDFindLib</packageId>
+				<displayName>TD Find Library</displayName>
+				<steamWorkshopUrl>steam://url/CommunityFilePage/2895299310</steamWorkshopUrl>
+				<downloadUrl>https://github.com/alextd/RimWorld-TDFindLib/releases/latest</downloadUrl>
+			</li>
+    </v1.4>
+  </modDependenciesByVersion>
+	<loadAfter>
+		<li>Uuugggg.TDFindLib</li>
+	</loadAfter>
 </ModMetaData>
