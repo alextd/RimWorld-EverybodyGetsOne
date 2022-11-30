@@ -56,7 +56,7 @@ namespace Everybody_Gets_One
 			queryQuestLodger.include = false;
 			search.Children.Add(queryQuestLodger, remake: false);
 
-			search.name = "People for bill TODO";
+			search.name = "People for bill: " + bill.LabelCap;
 
 			Find.WindowStack.Add(new PersonCounterEditor(search));
 
@@ -87,7 +87,7 @@ namespace Everybody_Gets_One
 			//above //doCloseX = true;
 		}
 
-		public override Vector2 InitialSize => new Vector2(600, 400);
+		public override Vector2 InitialSize => new Vector2(750, 400);
 
 		public override void SetInitialSizeAndPosition()
 		{
