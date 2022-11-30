@@ -8,12 +8,12 @@ using Verse;
 
 namespace Everybody_Gets_One
 {
-	public class ColonistCountMapComp : MapComponent
+	public class PersonCountMapComp : MapComponent
 	{
 		//cache these counts each update
-		public int colonistCount, slaveCount;
+		public int colonistCount;
 
-		public ColonistCountMapComp(Map map) : base(map) { }
+		public PersonCountMapComp(Map map) : base(map) { }
 		public override void FinalizeInit()
 		{
 			MapComponentUpdate();
@@ -21,15 +21,11 @@ namespace Everybody_Gets_One
 		public override void MapComponentUpdate()
 		{
 			colonistCount = map.mapPawns.AllPawns.Count(p => p.IsColonist && !p.IsSlaveOfColony && !p.IsQuestLodger());
-			slaveCount = map.mapPawns.AllPawns.Count(p => p.IsSlaveOfColony && !p.IsQuestLodger());
 		}
 	}
 	public static class MapCompExtensions
 	{
-		public static int CurrentColonistCount(this Map map) =>
-			map.GetComponent<ColonistCountMapComp>().colonistCount;
-
-		public static int CurrentSlaveCount(this Map map) =>
-			map.GetComponent<ColonistCountMapComp>().slaveCount;
+		public static int CurrentPersonCount(this Map map) =>
+			map.GetComponent<PersonCountMapComp>().colonistCount;
 	}
 }

@@ -21,27 +21,15 @@
   </BillRepeatModeDef>
 	-->
 	<BillRepeatModeDef>
-		<defName>TD_ColonistCount</defName>
-		<label>One per colonist + X</label>
+		<defName>TD_PersonCount</defName>
+		<label>One per person (+ X)</label>
 		<listOrder>15</listOrder> <!-- listOrder seems to do nothing -->
 	</BillRepeatModeDef>
 	
 	<BillRepeatModeDef>
-		<defName>TD_XPerColonist</defName>
-		<label>X per colonist</label>
+		<defName>TD_XPerPerson</defName>
+		<label>X per person</label>
 		<listOrder>17</listOrder>
-	</BillRepeatModeDef>
-
-  <BillRepeatModeDef>
-		<defName>TD_SlaveCount</defName>
-		<label>One per slave + X</label>
-		<listOrder>18</listOrder> <!-- listOrder seems to do nothing -->
-	</BillRepeatModeDef>
-	
-	<BillRepeatModeDef>
-		<defName>TD_XPerSlave</defName>
-		<label>X per slave</label>
-		<listOrder>19</listOrder>
 	</BillRepeatModeDef>
 	
 	<BillRepeatModeDef>

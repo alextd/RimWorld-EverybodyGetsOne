@@ -4,10 +4,8 @@
 	<RepeatCount.label>do X times</RepeatCount.label>
 	<TargetCount.label>do until you have X</TargetCount.label>
 	<Forever.label>do forever</Forever.label>
-	<TD_ColonistCount.label>One per colonist + X</TD_ColonistCount.label>
-	<TD_XPerColonist.label>X per colonist</TD_XPerColonist.label>
-	<TD_SlaveCount.label>One per slave + X</TD_SlaveCount.label>
-	<TD_XPerSlave.label>X per slave</TD_XPerSlave.label>
+	<TD_PersonCount.label>One per person + X</TD_PersonCount.label>
+	<TD_XPerPerson.label>X per person</TD_XPerPerson.label>
 	<TD_WithSurplusIng.label>With surplus</TD_WithSurplusIng.label>
 	
 </LanguageData>

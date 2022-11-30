@@ -15,11 +15,9 @@ namespace Everybody_Gets_One
 	[DefOf]
 	public static class RepeatModeDefOf
 	{
-		public static BillRepeatModeDef TD_ColonistCount;
-		public static BillRepeatModeDef TD_XPerColonist;
+		public static BillRepeatModeDef TD_PersonCount;
+		public static BillRepeatModeDef TD_XPerPerson;
 		public static BillRepeatModeDef TD_WithSurplusIng;
-    public static BillRepeatModeDef TD_SlaveCount;
-    public static BillRepeatModeDef TD_XPerSlave;
 	}
 
 	public static class Extensions
@@ -27,19 +25,15 @@ namespace Everybody_Gets_One
 		public static int TargetCount(this Bill_Production bill)
 		{
 			return 
-				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.CurrentColonistCount() + bill.targetCount :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.CurrentColonistCount() * bill.targetCount :
-				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.CurrentSlaveCount() + bill.targetCount :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerSlave ? bill.Map.CurrentSlaveCount() * bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_PersonCount ? bill.Map.CurrentPersonCount() + bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerPerson ? bill.Map.CurrentPersonCount() * bill.targetCount :
 				bill.targetCount;
 		}
 		public static int UnpauseWhenYouHave(this Bill_Production bill)
 		{
 			return 
-				bill.repeatMode == RepeatModeDefOf.TD_ColonistCount ? bill.Map.CurrentColonistCount() + bill.unpauseWhenYouHave :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerColonist ? bill.Map.CurrentColonistCount() * bill.unpauseWhenYouHave :
-				bill.repeatMode == RepeatModeDefOf.TD_SlaveCount ? bill.Map.CurrentSlaveCount() + bill.unpauseWhenYouHave :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerSlave ? bill.Map.CurrentSlaveCount() * bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_PersonCount ? bill.Map.CurrentPersonCount() + bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerPerson ? bill.Map.CurrentPersonCount() * bill.unpauseWhenYouHave :
 				bill.unpauseWhenYouHave;
 		}
 		public static int IngredientCount(this Bill_Production bill)
@@ -66,24 +60,14 @@ namespace Everybody_Gets_One
 		//public string RepeatInfoText
 		public static bool Prefix(ref string __result, Bill_Production __instance)
 		{
-			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount)
+			if (__instance.repeatMode == RepeatModeDefOf.TD_PersonCount)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentColonistCount()}+{__instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentPersonCount()}+{__instance.targetCount})";
 				return false;
 			}
-			if (__instance.repeatMode == RepeatModeDefOf.TD_SlaveCount)
+			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentSlaveCount()}+{__instance.targetCount})";
-				return false;
-			}
-			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist)
-			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentColonistCount() * __instance.targetCount} ({__instance.targetCount})";
-				return false;
-			}
-			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave)
-			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentSlaveCount() * __instance.targetCount} ({__instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentPersonCount() * __instance.targetCount} ({__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
@@ -101,10 +85,8 @@ namespace Everybody_Gets_One
 		//public override bool ShouldDoNow()
 		public static bool Prefix(ref bool __result, Bill_Production __instance)
 		{
-			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount || 
-				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist ||
-				__instance.repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave)
+			if (__instance.repeatMode == RepeatModeDefOf.TD_PersonCount || 
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
 				if (__instance.suspended)
 				{
@@ -153,7 +135,7 @@ namespace Everybody_Gets_One
 		//protected override void DoConfigInterface(Rect baseRect, Color baseColor)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			instructions = OrColonistCount_Transpiler.Transpiler(instructions);
+			instructions = OrPersonCount_Transpiler.Transpiler(instructions);
 
 			//For One-Per + X, don't set a minumum
 			FieldInfo repeatModeInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.repeatMode));
@@ -176,7 +158,7 @@ namespace Everybody_Gets_One
 
 		public static int ActuallyMax(int a, int b, BillRepeatModeDef def)
 		{
-			if (def == RepeatModeDefOf.TD_ColonistCount || def == RepeatModeDefOf.TD_SlaveCount) return b;
+			if (def == RepeatModeDefOf.TD_PersonCount) return b;
 
 			return UnityEngine.Mathf.Max(a, b);
 		}
@@ -188,10 +170,8 @@ namespace Everybody_Gets_One
 		//private bool CanUnpause()
 		public static bool Prefix(ref bool __result, Bill_Production __instance)
 		{
-			if (__instance.repeatMode == RepeatModeDefOf.TD_ColonistCount ||
-				__instance.repeatMode == RepeatModeDefOf.TD_XPerColonist ||
-				__instance.repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				__instance.repeatMode == RepeatModeDefOf.TD_XPerSlave)
+			if (__instance.repeatMode == RepeatModeDefOf.TD_PersonCount ||
+				__instance.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
 				__result = __instance.paused && __instance.pauseWhenSatisfied && __instance.recipe.WorkerCounter.CountProducts(__instance) < __instance.TargetCount();
 				return false;
@@ -222,7 +202,7 @@ namespace Everybody_Gets_One
 
 		public static List<FloatMenuOption> InsertMode(List<FloatMenuOption> options, Bill_Production bill)
 		{
-			FloatMenuOption item = new FloatMenuOption(RepeatModeDefOf.TD_ColonistCount.LabelCap, delegate
+			FloatMenuOption item = new FloatMenuOption(RepeatModeDefOf.TD_PersonCount.LabelCap, delegate
 			{
 				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
 				{
@@ -230,28 +210,12 @@ namespace Everybody_Gets_One
 				}
 				else
 				{
-					bill.repeatMode = RepeatModeDefOf.TD_ColonistCount;
+					bill.repeatMode = RepeatModeDefOf.TD_PersonCount;
 				}
 			});
 			options.Add(item);
 
-			if (ModsConfig.IdeologyActive)
-			{
-				item = new FloatMenuOption(RepeatModeDefOf.TD_SlaveCount.LabelCap, delegate
-				{
-					if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
-					{
-						Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
-					}
-					else
-					{
-						bill.repeatMode = RepeatModeDefOf.TD_SlaveCount;
-					}
-				});
-				options.Add(item);
-			}
-
-			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerColonist.LabelCap, delegate
+			item = new FloatMenuOption(RepeatModeDefOf.TD_XPerPerson.LabelCap, delegate
 			{
 				if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
 				{
@@ -259,26 +223,10 @@ namespace Everybody_Gets_One
 				}
 				else
 				{
-					bill.repeatMode = RepeatModeDefOf.TD_XPerColonist;
+					bill.repeatMode = RepeatModeDefOf.TD_XPerPerson;
 				}
 			});
 			options.Add(item);
-
-			if (ModsConfig.IdeologyActive)
-			{
-				item = new FloatMenuOption(RepeatModeDefOf.TD_XPerSlave.LabelCap, delegate
-				{
-					if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
-					{
-						Messages.Message("RecipeCannotHaveTargetCount".Translate(), MessageTypeDefOf.RejectInput, false);
-					}
-					else
-					{
-						bill.repeatMode = RepeatModeDefOf.TD_XPerSlave;
-					}
-				});
-				options.Add(item);
-			}
 
 			item = new FloatMenuOption(RepeatModeDefOf.TD_WithSurplusIng.LabelCap, delegate
 			{
@@ -303,7 +251,7 @@ namespace Everybody_Gets_One
 		//public override void DoWindowContents(Rect inRect)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			instructions = OrColonistCount_Transpiler.Transpiler(instructions);
+			instructions = OrPersonCount_Transpiler.Transpiler(instructions);
 			instructions = Transpilers.MethodReplacer(instructions,
 				AccessTools.Method(typeof(RecipeWorkerCounter), nameof(RecipeWorkerCounter.CountProducts)),
 				AccessTools.Method(typeof(Dialog_BillConfig_Patch), nameof(CountTracked)));
@@ -312,7 +260,7 @@ namespace Everybody_Gets_One
 			FieldInfo targetCountInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.targetCount));
 			FieldInfo unpauseWhenYouHaveInfo = AccessTools.Field(typeof(Bill_Production), nameof(Bill_Production.unpauseWhenYouHave));
 
-			int todoTCByValue = 1;//first 2 counts of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count colonists
+			int todoTCByValue = 1;//first 2 counts of targetCount is displayed count, not X, so use Extensions.TargetCount instead to count people
 			int todoTCByRef = 1;//but the second is actually ldflda which means the replacement function can't be used and TargetCountRef needs to be created AUGH.
 			int todoUnpause = 1; //first ldflda unpauseWhenYouHave is the displayed count
 			foreach (CodeInstruction i in instructions)
@@ -352,7 +300,7 @@ namespace Everybody_Gets_One
 			return ref returnValue;
 		}
 	}
-	public static class OrColonistCount_Transpiler
+	public static class OrPersonCount_Transpiler
 	{
 		//Once upon a time only the first method should be replaced
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
@@ -396,9 +344,9 @@ namespace Everybody_Gets_One
 
 					//Stack is: this.bill.repeatMode, BillRepeatModeDefOf.TargetCount
 					//Replacing if(repeatMode == TargetCount) with 
-					//(repeatMode == TargetCount || repeatMode == TD_ColonistCount ) via method call
+					//(repeatMode == TargetCount || repeatMode == TD_PersonCount ) via method call
 
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrColonistCount_Transpiler), ModeFor(context, noSurplus)));
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(OrPersonCount_Transpiler), ModeFor(context, noSurplus)));
 					yield return new CodeInstruction(
 						inst.opcode == OpCodes.Bne_Un ? OpCodes.Brfalse :
 						inst.opcode == OpCodes.Bne_Un_S ? OpCodes.Brfalse_S :
@@ -416,20 +364,16 @@ namespace Everybody_Gets_One
 		public static bool IsAnyTargetMode(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
 		{
 			return repeatMode == targetCountMode ||
-				repeatMode == RepeatModeDefOf.TD_ColonistCount ||
-				repeatMode == RepeatModeDefOf.TD_XPerColonist ||
-				repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				repeatMode == RepeatModeDefOf.TD_XPerSlave ||
+				repeatMode == RepeatModeDefOf.TD_PersonCount ||
+				repeatMode == RepeatModeDefOf.TD_XPerPerson ||
 				repeatMode == RepeatModeDefOf.TD_WithSurplusIng;
 		}
 
 		public static bool IsAnyPauseMode(BillRepeatModeDef repeatMode, BillRepeatModeDef targetCountMode)
 		{
 			return repeatMode == targetCountMode ||
-				repeatMode == RepeatModeDefOf.TD_ColonistCount ||
-				repeatMode == RepeatModeDefOf.TD_XPerColonist ||
-				repeatMode == RepeatModeDefOf.TD_SlaveCount ||
-				repeatMode == RepeatModeDefOf.TD_XPerSlave;
+				repeatMode == RepeatModeDefOf.TD_PersonCount ||
+				repeatMode == RepeatModeDefOf.TD_XPerPerson;
 		}
 	}
 
@@ -452,7 +396,7 @@ namespace Everybody_Gets_One
 
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			return OrColonistCount_Transpiler.Transpiler(instructions);
+			return OrPersonCount_Transpiler.Transpiler(instructions);
 		}
 	}
 
@@ -473,7 +417,7 @@ namespace Everybody_Gets_One
 
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			return OrColonistCount_Transpiler.TranspilerB(instructions, 9999, true);
+			return OrPersonCount_Transpiler.TranspilerB(instructions, 9999, true);
 		}
 
 	}

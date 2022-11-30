@@ -4,10 +4,8 @@
 <RepeatCount.label>X mal</RepeatCount.label>
 <TargetCount.label>Bis du X hast</TargetCount.label>
 <Forever.label>Für immer</Forever.label>
-<TD_ColonistCount.label>Einmal pro Kolonist + X</TD_ColonistCount.label>
-<TD_XPerColonist.label>X pro Kolonist</TD_XPerColonist.label>
-<TD_SlaveCount.label>Einmal pro Sklave + X</TD_SlaveCount.label>
-<TD_XPerSlave.label>X pro Sklave</TD_XPerSlave.label>
+<TD_PersonCount.label>Einmal pro Kolonist + X</TD_PersonCount.label>
+<TD_XPerPerson.label>X pro Kolonist</TD_XPerPerson.label>
 <TD_WithSurplusIng.label>Bei Überfluss</TD_WithSurplusIng.label>
 
 </LanguageData>
