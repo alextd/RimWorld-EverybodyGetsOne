@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse;
+using UnityEngine;
 using TD_Find_Lib;
 
 namespace Everybody_Gets_One
@@ -57,14 +58,42 @@ namespace Everybody_Gets_One
 
 			search.name = "People for bill TODO";
 
-			Find.WindowStack.Add(new SearchEditorWindow(search, null));
+			Find.WindowStack.Add(new PersonCounterEditor(search));
 
 			return search;
 		}
 
 		public void OpenPersonCounter(Bill_Production bill)
 		{
-			Find.WindowStack.Add(new SearchEditorWindow(GetPersonCounter(bill), null));
+			Find.WindowStack.Add(new PersonCounterEditor(GetPersonCounter(bill)));
+		}
+	}
+
+	public class PersonCounterEditor : SearchEditorWindow
+	{
+		public PersonCounterEditor(QuerySearch search) : base(search, null)
+		{
+			//Same as the Dialog_BillConfig
+			forcePause = true;
+			doCloseX = true;
+			absorbInputAroundWindow = true;
+			closeOnClickedOutside = true;
+
+			//Overrides from SearchEditorWindow
+			onlyOneOfTypeAllowed = true;
+			//preventCameraMotion = false;
+			draggable = false;
+			resizeable = false;
+			//above //doCloseX = true;
+		}
+
+		public override Vector2 InitialSize => new Vector2(600, 400);
+
+		public override void SetInitialSizeAndPosition()
+		{
+			base.SetInitialSizeAndPosition();
+			windowRect.x = (UI.screenWidth - windowRect.width) / 2;
+			windowRect.y = 0;
 		}
 	}
 
