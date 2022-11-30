@@ -25,15 +25,15 @@ namespace Everybody_Gets_One
 		public static int TargetCount(this Bill_Production bill)
 		{
 			return 
-				bill.repeatMode == RepeatModeDefOf.TD_PersonCount ? bill.Map.CurrentPersonCount() + bill.targetCount :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerPerson ? bill.Map.CurrentPersonCount() * bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_PersonCount ? bill.Map.CurrentPersonCount(bill) + bill.targetCount :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerPerson ? bill.Map.CurrentPersonCount(bill) * bill.targetCount :
 				bill.targetCount;
 		}
 		public static int UnpauseWhenYouHave(this Bill_Production bill)
 		{
 			return 
-				bill.repeatMode == RepeatModeDefOf.TD_PersonCount ? bill.Map.CurrentPersonCount() + bill.unpauseWhenYouHave :
-				bill.repeatMode == RepeatModeDefOf.TD_XPerPerson ? bill.Map.CurrentPersonCount() * bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_PersonCount ? bill.Map.CurrentPersonCount(bill) + bill.unpauseWhenYouHave :
+				bill.repeatMode == RepeatModeDefOf.TD_XPerPerson ? bill.Map.CurrentPersonCount(bill) * bill.unpauseWhenYouHave :
 				bill.unpauseWhenYouHave;
 		}
 		public static int IngredientCount(this Bill_Production bill)
@@ -62,12 +62,12 @@ namespace Everybody_Gets_One
 		{
 			if (__instance.repeatMode == RepeatModeDefOf.TD_PersonCount)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentPersonCount()}+{__instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/({__instance.Map.CurrentPersonCount(__instance)}+{__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
-				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentPersonCount() * __instance.targetCount} ({__instance.targetCount})";
+				__result = $"{__instance.recipe.WorkerCounter.CountProducts(__instance)}/{__instance.Map.CurrentPersonCount(__instance) * __instance.targetCount} ({__instance.targetCount})";
 				return false;
 			}
 			if (__instance.repeatMode == RepeatModeDefOf.TD_WithSurplusIng)
