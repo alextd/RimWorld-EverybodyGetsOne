@@ -44,7 +44,7 @@ namespace Everybody_Gets_One
 				Rect myRect = rect.TopPartPixels(30);
 				if (Widgets.ButtonText(myRect, "Edit who counts as a person"))
 				{
-					Log.Message("Opening TDFindLib UI");
+					map.OpenPersonCounter(bill);
 				}
 
 

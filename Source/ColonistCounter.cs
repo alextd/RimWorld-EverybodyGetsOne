@@ -16,15 +16,23 @@ namespace Everybody_Gets_One
 
 		public PersonCountMapComp(Map map) : base(map) { }
 
-		public int CountFor(Bill_Production bill)
+		public QuerySearch GetPersonCounter(Bill_Production bill)
 		{
 			QuerySearch personCounter;
-			if(!billPersonCounters.TryGetValue(bill, out personCounter))
+			if (!billPersonCounters.TryGetValue(bill, out personCounter))
 			{
 				personCounter = MakePersonCounter(bill);
 				billPersonCounters[bill] = personCounter;
 			}
+			return personCounter;
+		}
+
+		public int CountFor(Bill_Production bill)
+		{
+			QuerySearch personCounter = GetPersonCounter(bill);
+
 			personCounter.RemakeList();
+
 			return personCounter.result.allThings.Count;
 		}
 
@@ -47,11 +55,16 @@ namespace Everybody_Gets_One
 			queryQuestLodger.include = false;
 			search.Children.Add(queryQuestLodger, remake: false);
 
-			search.name = "People for bill ";
+			search.name = "People for bill TODO";
 
 			Find.WindowStack.Add(new SearchEditorWindow(search, null));
 
 			return search;
+		}
+
+		public void OpenPersonCounter(Bill_Production bill)
+		{
+			Find.WindowStack.Add(new SearchEditorWindow(GetPersonCounter(bill), null));
 		}
 	}
 
@@ -59,5 +72,8 @@ namespace Everybody_Gets_One
 	{
 		public static int CurrentPersonCount(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().CountFor(bill);
+
+		public static void OpenPersonCounter(this Map map, Bill_Production bill) =>
+			map.GetComponent<PersonCountMapComp>().OpenPersonCounter(bill);
 	}
 }
