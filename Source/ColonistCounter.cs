@@ -17,6 +17,15 @@ namespace Everybody_Gets_One
 
 		public PersonCountMapComp(Map map) : base(map) { }
 
+		private List<Bill_Production> scribeBills;
+		private List<QuerySearch> scribeSearches;
+		public override void ExposeData()
+		{
+			Scribe_Collections.Look(ref billPersonCounters, "billPersonCounters", LookMode.Reference, LookMode.Deep, ref scribeBills, ref scribeSearches);
+			if (billPersonCounters == null)
+				billPersonCounters = new();
+		}
+
 		public QuerySearch GetPersonCounter(Bill_Production bill)
 		{
 			QuerySearch personCounter;
