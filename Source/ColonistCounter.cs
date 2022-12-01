@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse;
+using HarmonyLib;
 using UnityEngine;
 using TD_Find_Lib;
 
@@ -36,6 +37,12 @@ namespace Everybody_Gets_One
 			}
 			return personCounter;
 		}
+
+		public void RemovePersonCounter(Bill_Production bill)
+		{
+			billPersonCounters.Remove(bill);
+		}
+
 
 		public int CountFor(Bill_Production bill)
 		{
@@ -113,5 +120,21 @@ namespace Everybody_Gets_One
 
 		public static void OpenPersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().OpenPersonCounter(bill);
+
+		public static void RemovePersonCounter(this Map map, Bill_Production bill) =>
+			map.GetComponent<PersonCountMapComp>().RemovePersonCounter(bill);
+	}
+
+
+	[HarmonyPatch(typeof(Building_WorkTable), nameof(Building_WorkTable.Notify_BillDeleted))]
+	public static class DeleteBillCounter
+	{
+		public static void Postfix(Building_WorkTable __instance, Bill bill)
+		{
+			if(bill is Bill_Production billP)
+			{
+				__instance.MapHeld.RemovePersonCounter(billP);
+			}
+		}
 	}
 }
