@@ -27,6 +27,17 @@ namespace Everybody_Gets_One
 				billPersonCounters = new();
 		}
 
+		public bool HasPersonCounter(Bill_Production bill)
+		{
+			return billPersonCounters.ContainsKey(bill);
+		}
+
+		public void SetPersonCounter(Bill_Production bill, QuerySearch search)
+		{
+			billPersonCounters[bill] = search;
+
+		}
+
 		public QuerySearch GetPersonCounter(Bill_Production bill)
 		{
 			QuerySearch personCounter;
@@ -121,8 +132,17 @@ namespace Everybody_Gets_One
 		public static void OpenPersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().OpenPersonCounter(bill);
 
+		public static bool HasPersonCounter(this Map map, Bill_Production bill) =>
+			map.GetComponent<PersonCountMapComp>().HasPersonCounter(bill);
+
+		public static QuerySearch GetPersonCounter(this Map map, Bill_Production bill) =>
+			map.GetComponent<PersonCountMapComp>().GetPersonCounter(bill);
+
 		public static void RemovePersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().RemovePersonCounter(bill);
+
+		public static void SetPersonCounter(this Map map, Bill_Production bill, QuerySearch search) =>
+			map.GetComponent<PersonCountMapComp>().SetPersonCounter(bill, search);
 	}
 
 
