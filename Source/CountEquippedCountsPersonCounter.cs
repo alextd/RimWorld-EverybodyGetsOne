@@ -42,7 +42,8 @@ namespace Everybody_Gets_One
 
 				search.RemakeList();
 
-				return search.result.allThings.Where(t => t is Pawn).Cast<Pawn>().ToList();
+				//Only return pawns with equipment + apparel + inventory as that is what "Count Equipped" checks.
+				return search.result.allThings.Where(t => t is Pawn p && p.equipment != null && p.apparel != null && p.inventory != null).Cast<Pawn>().ToList();
 			}
 			return mapPawns.FreeColonistsSpawned;
 		}
