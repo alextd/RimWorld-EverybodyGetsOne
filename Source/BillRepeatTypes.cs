@@ -304,8 +304,6 @@ namespace Everybody_Gets_One
 	{
 		//Once upon a time only the first method should be replaced
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
-			TranspilerC(instructions, 9999);
-		public static IEnumerable<CodeInstruction> TranspilerC(IEnumerable<CodeInstruction> instructions, int count) =>
 			TranspilerB(instructions, 9999, false);
 		public static IEnumerable<CodeInstruction> TranspilerB(IEnumerable<CodeInstruction> instructions, int count, bool noSurplus)
 		{
