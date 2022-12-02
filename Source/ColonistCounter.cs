@@ -85,7 +85,8 @@ namespace Everybody_Gets_One
 
 			search.name = "People for bill: " + bill.LabelCap;
 
-			Find.WindowStack.Add(new PersonCounterEditor(search));
+			// Maybe don't immediately open it.
+			// Find.WindowStack.Add(new PersonCounterEditor(search));
 
 			return search;
 		}
