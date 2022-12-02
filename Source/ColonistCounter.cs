@@ -115,7 +115,7 @@ namespace Everybody_Gets_One
 			//above //doCloseX = true;
 		}
 
-		public override Vector2 InitialSize => new Vector2(750, 400);
+		public override Vector2 InitialSize => new Vector2(750, 320);
 
 		public override void SetInitialSizeAndPosition()
 		{
