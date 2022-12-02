@@ -42,7 +42,7 @@ namespace Everybody_Gets_One
 			if (bill.repeatMode == RepeatModeDefOf.TD_PersonCount || bill.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
 				Rect myRect = rect.TopPartPixels(30);
-				if (Widgets.ButtonText(myRect, "Edit who counts as a person"))
+				if (Widgets.ButtonText(myRect, "TD.EditWhoCountsAsAPerson".Translate()))
 				{
 					map.OpenPersonCounter(bill);
 				}

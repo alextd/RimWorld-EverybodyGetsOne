@@ -83,7 +83,7 @@ namespace Everybody_Gets_One
 			queryQuestLodger.include = false;
 			search.Children.Add(queryQuestLodger, remake: false);
 
-			search.name = "People for bill: " + bill.LabelCap;
+			search.name = "TD.PeopleForBill".Translate() + bill.LabelCap;
 
 			// Maybe don't immediately open it.
 			// Find.WindowStack.Add(new PersonCounterEditor(search));
