@@ -124,13 +124,15 @@ namespace Everybody_Gets_One
 			windowRect.y = 0;
 		}
 
-		public override QuerySearch.CloneArgs ImportArgs =>
-			new QuerySearch.CloneArgs
-			{
-				type = QuerySearch.CloneType.Use,
-				maps = drawer.search.ChosenMaps,
-				newName = drawer.search.name
-			};
+		public override void Import(QuerySearch search)
+		{
+			// Keep name and map type, only take these:
+			drawer.search.parameters.listType = search.parameters.listType;
+			drawer.search.changedSinceRemake = true;
+
+			drawer.search.Children.queries = search.Children.queries;
+			drawer.search.Children.matchAllQueries = search.Children.matchAllQueries;
+		}
 	}
 
 	public static class MapCompExtensions
