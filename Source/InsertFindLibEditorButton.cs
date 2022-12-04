@@ -14,43 +14,22 @@ using TD_Find_Lib;
 namespace Everybody_Gets_One
 {
 
-	[HarmonyPatch(typeof(Dialog_BillConfig), "DoIngredientConfigPane")]
+	[HarmonyPatch(typeof(Dialog_BillConfig), nameof(Dialog_BillConfig.DoIngredientConfigPane))]
 	public static class InsertFindLibEditorButton
 	{
-		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+		//protected virtual void DoIngredientConfigPane(float x, ref float y, float width, float height)
+		public static void Prefix(Dialog_BillConfig __instance, float x, ref float y, float width, ref float height)
 		{
-			MethodInfo DoThingFilterConfigWindowInfo = AccessTools.Method(typeof(ThingFilterUI), nameof(ThingFilterUI.DoThingFilterConfigWindow));
-
-
-			foreach (var inst in instructions)
-			{
-				if (inst.Calls(DoThingFilterConfigWindowInfo))
-				{
-					yield return new CodeInstruction(OpCodes.Ldarg_0);//this
-					yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Dialog_BillConfig), "bill"));//this.bill
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InsertFindLibEditorButton), nameof(DoThingFilterConfigWindowAfterMyButton)));
-					//DoThingFilterConfigWindow( ... ) => DoThingFilterConfigWindowAfterMyWinow(..., bill)
-				}
-				else
-					yield return inst;
-			}
-		}
-
-		//public static void DoThingFilterConfigWindow(Rect rect, UIState state, ThingFilter filter, ThingFilter parentFilter = null, int openMask = 1, IEnumerable<ThingDef> forceHiddenDefs = null, IEnumerable<SpecialThingFilterDef> forceHiddenFilters = null, bool forceHideHitPointsConfig = false, List<ThingDef> suppressSmallVolumeTags = null, Map map = null)
-		public static void DoThingFilterConfigWindowAfterMyButton(Rect rect, ThingFilterUI.UIState state, ThingFilter filter, ThingFilter parentFilter = null, int openMask = 1, IEnumerable<ThingDef> forceHiddenDefs = null, IEnumerable<SpecialThingFilterDef> forceHiddenFilters = null, bool forceHideHitPointsConfig = false, List<ThingDef> suppressSmallVolumeTags = null, Map map = null, Bill_Production bill = null)
-		{
+			Bill_Production bill = __instance.bill;
 			if (bill.repeatMode == RepeatModeDefOf.TD_PersonCount || bill.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
-				Rect myRect = rect.TopPartPixels(30);
-				if (Widgets.ButtonText(myRect, "TD.EditWhoCountsAsAPerson".Translate()))
-				{
-					map.OpenPersonCounter(bill);
-				}
+				Rect rect = new(x, y, width, 30);
+				if (Widgets.ButtonText(rect, "TD.EditWhoCountsAsAPerson".Translate()))
+					bill.Map.OpenPersonCounter(bill);
 
-
-				rect.yMin += 36;
+				y += 30 + 6;
+				height -= 30 + 6;
 			}
-			ThingFilterUI.DoThingFilterConfigWindow(rect, state, filter, parentFilter, openMask, forceHiddenDefs, forceHiddenFilters, forceHideHitPointsConfig, suppressSmallVolumeTags, map);
 		}
 	}
 }
