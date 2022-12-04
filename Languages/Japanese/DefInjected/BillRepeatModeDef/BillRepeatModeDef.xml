@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <TD_PersonCount.label>1人ごとに1つ (+x個)</TD_PersonCount.label>
+  <TD_XPerPerson.label>1人ごとに x個</TD_XPerPerson.label>
+  <TD_WithSurplusIng.label>余剰分も含む</TD_WithSurplusIng.label>
+
+</LanguageData>
