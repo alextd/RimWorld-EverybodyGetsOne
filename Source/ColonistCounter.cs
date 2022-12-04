@@ -123,6 +123,14 @@ namespace Everybody_Gets_One
 			windowRect.x = (UI.screenWidth - windowRect.width) / 2;
 			windowRect.y = 0;
 		}
+
+		public override QuerySearch.CloneArgs ImportArgs =>
+			new QuerySearch.CloneArgs
+			{
+				type = QuerySearch.CloneType.Use,
+				maps = drawer.search.ChosenMaps,
+				newName = drawer.search.name
+			};
 	}
 
 	public static class MapCompExtensions
