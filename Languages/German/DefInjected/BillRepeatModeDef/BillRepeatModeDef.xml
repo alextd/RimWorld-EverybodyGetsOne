@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
-<RepeatCount.label>X mal</RepeatCount.label>
-<TargetCount.label>Bis du X hast</TargetCount.label>
-<Forever.label>Für immer</Forever.label>
 <TD_PersonCount.label>Einmal pro Kolonist + X</TD_PersonCount.label>
 <TD_XPerPerson.label>X pro Kolonist</TD_XPerPerson.label>
 <TD_WithSurplusIng.label>Bei Überfluss</TD_WithSurplusIng.label>
