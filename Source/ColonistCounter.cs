@@ -61,7 +61,7 @@ namespace Everybody_Gets_One
 
 			personCounter.RemakeList();
 
-			return personCounter.result.allThings.Count;
+			return personCounter.result.allThings.Sum(t => t.stackCount);
 		}
 
 		public QuerySearch MakePersonCounter(Bill_Production bill)
