@@ -99,8 +99,12 @@ namespace Everybody_Gets_One
 
 	public class PersonCounterEditor : SearchEditorWindow
 	{
+		QuerySearch originalSearch;
 		public PersonCounterEditor(QuerySearch search) : base(search, null)
 		{
+			drawer.search.changed = false;
+			originalSearch = search.CloneForUse();
+
 			//Same as the Dialog_BillConfig
 			forcePause = true;
 			doCloseX = true;
@@ -132,6 +136,27 @@ namespace Everybody_Gets_One
 
 			drawer.search.Children.queries = search.Children.queries;
 			drawer.search.Children.matchAllQueries = search.Children.matchAllQueries;
+
+			drawer.search.changed = true;
+		}
+
+		public override void PostClose()
+		{
+			if (drawer.search.changed)
+			{
+				Verse.Find.WindowStack.Add(new Dialog_MessageBox(
+					null,
+					"Confirm".Translate(), null,
+					"No".Translate(), () =>
+					{
+						Import(originalSearch);
+						drawer.search.changed = false;
+					},
+					"Keep changes?",
+					true, null,
+					delegate () { }// I dunno who wrote this class but this empty method is required so the window can close with esc because its logic is very different from its base class
+					));
+			}
 		}
 	}
 
