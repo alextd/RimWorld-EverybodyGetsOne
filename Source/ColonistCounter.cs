@@ -220,4 +220,17 @@ namespace Everybody_Gets_One
 			}
 		}
 	}
+
+	[HarmonyPatch(typeof(Building), nameof(Building.Destroy))]
+	public class Building_Destroy_Detour
+	{
+		public static void Prefix(Building __instance)
+		{
+			//Because Building_WorkTable doesn't override Destroy
+			if (__instance is Building_WorkTable workTable)
+				foreach (var bill in workTable.BillStack.Bills)
+					if (bill is Bill_Production billP)
+						__instance.MapHeld.RemovePersonCounter(billP);
+		}
+	}
 }
