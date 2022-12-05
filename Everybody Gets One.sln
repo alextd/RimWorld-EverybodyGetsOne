@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Files", "Files.csproj", "{AA1EF112-E817-4ED1-849A-EE55B8DAF3C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportImprovedWorkbenches", "ImprovedWorkbenches\SupportImprovedWorkbenches.csproj", "{7A0F54A2-5771-4E6F-8334-7F0C0F071DC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA} = {D7D21B4A-1DA7-41D8-B202-C58CA8FA62AA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -103,7 +103,7 @@ namespace Everybody_Gets_One
 		public PersonCounterEditor(QuerySearch search) : base(search, TransferTag)
 		{
 			drawer.search.changed = false;
-			originalSearch = search.CloneForUse();
+			originalSearch = search.CloneInactive();
 
 			//Same as the Dialog_BillConfig
 			forcePause = true;
@@ -130,14 +130,17 @@ namespace Everybody_Gets_One
 
 		public override void Import(QuerySearch search)
 		{
+			ImportInto(search, drawer.search);
+		}
+
+		public static void ImportInto(QuerySearch sourceSeach, QuerySearch destSearch)
+		{
 			// Keep name and map type, only take these:
-			drawer.search.parameters.listType = search.parameters.listType;
-			drawer.search.changedSinceRemake = true;
+			destSearch.parameters.listType = sourceSeach.parameters.listType;
+			destSearch.Children.Import(sourceSeach.Children);
 
-			drawer.search.Children.queries = search.Children.queries;
-			drawer.search.Children.matchAllQueries = search.Children.matchAllQueries;
-
-			drawer.search.changed = true;
+			destSearch.changedSinceRemake = true;
+			destSearch.changed = true;
 		}
 
 		public override void PostClose()
@@ -147,15 +150,11 @@ namespace Everybody_Gets_One
 				Verse.Find.WindowStack.Add(new Dialog_MessageBox(
 					null,
 					"Confirm".Translate(), null,
-					"No".Translate(), () =>
-					{
-						Import(originalSearch);
-						drawer.search.changed = false;
-					},
+					"No".Translate(), () => Import(originalSearch),
 					"Keep changes?",
 					true, null,
 					delegate () { }// I dunno who wrote this class but this empty method is required so the window can close with esc because its logic is very different from its base class
-					));
+					)); ;
 			}
 		}
 
@@ -200,6 +199,9 @@ namespace Everybody_Gets_One
 
 		public static QuerySearch GetPersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().GetPersonCounter(bill);
+
+		public static QuerySearch GetPersonCounter(this Bill_Production bill) =>
+			bill.Map.GetComponent<PersonCountMapComp>().GetPersonCounter(bill);
 
 		public static void RemovePersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().RemovePersonCounter(bill);

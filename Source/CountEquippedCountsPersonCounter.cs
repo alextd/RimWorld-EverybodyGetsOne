@@ -38,7 +38,7 @@ namespace Everybody_Gets_One
 		{
 			if (bill.repeatMode == RepeatModeDefOf.TD_PersonCount || bill.repeatMode == RepeatModeDefOf.TD_XPerPerson)
 			{
-				QuerySearch search = mapPawns.map.GetPersonCounter(bill);
+				QuerySearch search = bill.GetPersonCounter();
 
 				search.RemakeList();
 
