@@ -97,10 +97,10 @@ namespace Everybody_Gets_One
 		}
 	}
 
-	public class PersonCounterEditor : SearchEditorWindow
+	public class PersonCounterEditor : SearchEditorWindow, ISearchReceiver
 	{
 		QuerySearch originalSearch;
-		public PersonCounterEditor(QuerySearch search) : base(search, null)
+		public PersonCounterEditor(QuerySearch search) : base(search, TransferTag)
 		{
 			drawer.search.changed = false;
 			originalSearch = search.CloneForUse();
@@ -157,6 +157,33 @@ namespace Everybody_Gets_One
 					delegate () { }// I dunno who wrote this class but this empty method is required so the window can close with esc because its logic is very different from its base class
 					));
 			}
+		}
+
+
+		// ISearchReceiver stuff
+		public static string TransferTag = "TD.EGO";
+		public string Source => TransferTag;
+		public string ReceiveName => "Use as person counter";
+		public QuerySearch.CloneArgs CloneArgs => QuerySearch.CloneArgs.use;
+		
+		public bool CanReceive() => true;
+		public void Receive(QuerySearch search)
+		{
+			Import(search);
+		}
+
+		public override void PostOpen()
+		{
+			base.PostOpen();
+
+			SearchTransfer.Register(this);
+		}
+
+		public override void PreClose()
+		{
+			base.PreClose();
+
+			SearchTransfer.Deregister(this);
 		}
 	}
 
