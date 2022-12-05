@@ -8,9 +8,9 @@ using Verse;
 namespace SupportImprovedWorkbenches
 {
 	[StaticConstructorOnStartup]
-	public static class Paste
+	public static class BillCopyPaste
 	{
-		static Paste()
+		static BillCopyPaste()
 		{
 			Log.Message("Supporting BetterWorkbenches");
 		}
