@@ -41,7 +41,7 @@ namespace Everybody_Gets_One
 		public static void CopyCounterFor(Bill bill)
 		{
 			if (bill is Bill_Production billP && (bill.Map?.HasPersonCounter(billP) ?? false))
-				Clipboard = bill.Map.GetPersonCounter(billP).CloneInactive();
+				Clipboard = billP.GetPersonCounter().CloneInactive();
 			else
 				Clipboard = null;
 			Log.Message($"Setting Clipboard to {Clipboard}");

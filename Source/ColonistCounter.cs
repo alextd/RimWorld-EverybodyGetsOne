@@ -61,7 +61,7 @@ namespace Everybody_Gets_One
 
 			personCounter.RemakeList();
 
-			return personCounter.result.allThings.Count;
+			return personCounter.result.allThings.Sum(t => t.stackCount);
 		}
 
 		public QuerySearch MakePersonCounter(Bill_Production bill)
@@ -97,9 +97,9 @@ namespace Everybody_Gets_One
 		}
 	}
 
-	public class PersonCounterEditor : SearchEditorWindow
+	public class PersonCounterEditor : SearchEditorRevertableWindow, ISearchReceiver
 	{
-		public PersonCounterEditor(QuerySearch search) : base(search, null)
+		public PersonCounterEditor(QuerySearch search) : base(search, TransferTag)
 		{
 			//Same as the Dialog_BillConfig
 			forcePause = true;
@@ -124,14 +124,31 @@ namespace Everybody_Gets_One
 			windowRect.y = 0;
 		}
 
-		public override void Import(QuerySearch search)
-		{
-			// Keep name and map type, only take these:
-			drawer.search.parameters.listType = search.parameters.listType;
-			drawer.search.changedSinceRemake = true;
 
-			drawer.search.Children.queries = search.Children.queries;
-			drawer.search.Children.matchAllQueries = search.Children.matchAllQueries;
+		// ISearchReceiver stuff
+		public static string TransferTag = "TD.EGO";
+		public string Source => TransferTag;
+		public string ReceiveName => "TD.UseAsPersonCounter".Translate();
+		public QuerySearch.CloneArgs CloneArgs => QuerySearch.CloneArgs.use;
+		
+		public bool CanReceive() => true;
+		public void Receive(QuerySearch search)
+		{
+			Import(search);
+		}
+
+		public override void PostOpen()
+		{
+			base.PostOpen();
+
+			SearchTransfer.Register(this);
+		}
+
+		public override void PreClose()
+		{
+			base.PreClose();
+
+			SearchTransfer.Deregister(this);
 		}
 	}
 
@@ -148,6 +165,9 @@ namespace Everybody_Gets_One
 
 		public static QuerySearch GetPersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().GetPersonCounter(bill);
+
+		public static QuerySearch GetPersonCounter(this Bill_Production bill) =>
+			bill.Map.GetComponent<PersonCountMapComp>().GetPersonCounter(bill);
 
 		public static void RemovePersonCounter(this Map map, Bill_Production bill) =>
 			map.GetComponent<PersonCountMapComp>().RemovePersonCounter(bill);
@@ -166,6 +186,19 @@ namespace Everybody_Gets_One
 			{
 				__instance.MapHeld.RemovePersonCounter(billP);
 			}
+		}
+	}
+
+	[HarmonyPatch(typeof(Building), nameof(Building.Destroy))]
+	public class Building_Destroy_Detour
+	{
+		public static void Prefix(Building __instance)
+		{
+			//Because Building_WorkTable doesn't override Destroy
+			if (__instance is Building_WorkTable workTable)
+				foreach (var bill in workTable.BillStack.Bills)
+					if (bill is Bill_Production billP)
+						__instance.MapHeld.RemovePersonCounter(billP);
 		}
 	}
 }

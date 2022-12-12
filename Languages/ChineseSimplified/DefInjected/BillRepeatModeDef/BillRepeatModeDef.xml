@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
-<TD_ColonistCount.label>殖民者人数+X个</TD_ColonistCount.label>
-<TD_XPerColonist.label>殖民者人数的X倍个</TD_XPerColonist.label>
+<TD_PersonCount.label>殖民者人数+X个</TD_PersonCount.label>
+<TD_XPerPerson.label>殖民者人数的X倍个</TD_XPerPerson.label>
 <TD_WithSurplusIng.label>材料多于X个时制作</TD_WithSurplusIng.label>
 
 </LanguageData>

@@ -4,5 +4,6 @@
 	<TD.RecipeCannotHaveSurplus>(This recipe cannot have a surplus count because it has multiple ingredients.)</TD.RecipeCannotHaveSurplus>
 	<TD.PeopleForBill>People for bill: </TD.PeopleForBill>
 	<TD.EditWhoCountsAsAPerson>Edit who counts as a person</TD.EditWhoCountsAsAPerson>
+	<TD.UseAsPersonCounter>Use as person counter</TD.UseAsPersonCounter>
 	
 </LanguageData>
