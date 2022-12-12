@@ -97,14 +97,10 @@ namespace Everybody_Gets_One
 		}
 	}
 
-	public class PersonCounterEditor : SearchEditorWindow, ISearchReceiver
+	public class PersonCounterEditor : SearchEditorRevertableWindow, ISearchReceiver
 	{
-		QuerySearch originalSearch;
 		public PersonCounterEditor(QuerySearch search) : base(search, TransferTag)
 		{
-			drawer.search.changed = false;
-			originalSearch = search.CloneInactive();
-
 			//Same as the Dialog_BillConfig
 			forcePause = true;
 			doCloseX = true;
@@ -126,36 +122,6 @@ namespace Everybody_Gets_One
 			base.SetInitialSizeAndPosition();
 			windowRect.x = (UI.screenWidth - windowRect.width) / 2;
 			windowRect.y = 0;
-		}
-
-		public override void Import(QuerySearch search)
-		{
-			ImportInto(search, drawer.search);
-		}
-
-		public static void ImportInto(QuerySearch sourceSeach, QuerySearch destSearch)
-		{
-			// Keep name and map type, only take these:
-			destSearch.parameters.listType = sourceSeach.parameters.listType;
-			destSearch.Children.Import(sourceSeach.Children);
-
-			destSearch.changedSinceRemake = true;
-			destSearch.changed = true;
-		}
-
-		public override void PostClose()
-		{
-			if (drawer.search.changed)
-			{
-				Verse.Find.WindowStack.Add(new Dialog_MessageBox(
-					null,
-					"Confirm".Translate(), null,
-					"No".Translate(), () => Import(originalSearch),
-					"Keep changes?",
-					true, null,
-					delegate () { }// I dunno who wrote this class but this empty method is required so the window can close with esc because its logic is very different from its base class
-					)); ;
-			}
 		}
 
 
