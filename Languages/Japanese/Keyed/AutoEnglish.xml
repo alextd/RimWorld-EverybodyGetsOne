@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-	<TD.RecipeCannotHaveSurplus>(This recipe cannot have a surplus count because it has multiple ingredients.)</TD.RecipeCannotHaveSurplus>
-	<TD.PeopleForBill>People for bill: </TD.PeopleForBill>
-	<TD.EditWhoCountsAsAPerson>Edit who counts as a person</TD.EditWhoCountsAsAPerson>
-	
+  <TD.RecipeCannotHaveSurplus>（このレシピには複数の材料が含まれているため、余剰を計算できません。）</TD.RecipeCannotHaveSurplus>
+  <TD.PeopleForBill>加工対象者:</TD.PeopleForBill>
+  <TD.EditWhoCountsAsAPerson>誰を人物として数えるか編集</TD.EditWhoCountsAsAPerson>
+  <TD.UseAsPersonCounter>個人を数えて使用する</TD.UseAsPersonCounter>
+
 </LanguageData>
