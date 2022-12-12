@@ -128,7 +128,7 @@ namespace Everybody_Gets_One
 		// ISearchReceiver stuff
 		public static string TransferTag = "TD.EGO";
 		public string Source => TransferTag;
-		public string ReceiveName => "Use as person counter";
+		public string ReceiveName => "TD.UseAsPersonCounter".Translate();
 		public QuerySearch.CloneArgs CloneArgs => QuerySearch.CloneArgs.use;
 		
 		public bool CanReceive() => true;
