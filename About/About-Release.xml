@@ -34,4 +34,5 @@
 	<loadAfter>
 		<li>Uuugggg.TDFindLib</li>
 	</loadAfter>
+	<modIconPath IgnoreIfNoMatchingField="True">TDEverybodyGetsOneIcon</modIconPath>
 </ModMetaData>
