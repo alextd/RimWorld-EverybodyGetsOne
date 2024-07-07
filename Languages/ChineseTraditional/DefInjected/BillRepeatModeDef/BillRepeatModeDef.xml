@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<TD_PersonCount.label>每人1個外加擁有x個</TD_PersonCount.label>
+	<TD_XPerPerson.label>每人x個</TD_XPerPerson.label>
+	<TD_WithSurplusIng.label>多餘的原料超過x份</TD_WithSurplusIng.label>
+
+</LanguageData>

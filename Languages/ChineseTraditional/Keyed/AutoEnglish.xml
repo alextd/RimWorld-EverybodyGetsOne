@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<TD.RecipeCannotHaveSurplus>這個配方無法設置多餘數量，因為它有多種原料。</TD.RecipeCannotHaveSurplus>
+	<TD.PeopleForBill>用於訂單的人：</TD.PeopleForBill>
+	<TD.EditWhoCountsAsAPerson>編輯符合條件的人</TD.EditWhoCountsAsAPerson>
+	<TD.UseAsPersonCounter>用作人數計算器</TD.UseAsPersonCounter>
+
+</LanguageData>
